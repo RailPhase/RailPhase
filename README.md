@@ -22,9 +22,9 @@ Full API documentation is not yet available. See below for a basic usage example
 
 Use this library together with a web server like Apache and nginx. The web server will serve static content and forward HTTP requests for dynamic content to your application.
 
-Web2SHarp starts listening for requests and forwards them to your *views*. A view accepts a HttpRequest and returns a HttpResponse. Regular expressions are used to determine which URL pattern should be mapped to which view.
+Web2Sharp starts listening for requests and forwards them to your *views*. A view accepts a HttpRequest and returns a HttpResponse. Regular expressions are used to determine which URL pattern should be mapped to which view.
 
-Before using, make sure that you understand the concept of FastCGI. Your Web2Sharp app will *not* accept HTTP connections. You need a web server to access your content.
+Before using, make sure that you understand the concept of [FastCGI](https://en.wikipedia.org/wiki/FastCGI). Your Web2Sharp app will *not* accept HTTP connections. You need a web server to access your content.
 
 This example sets up a simple web application:
 
@@ -68,7 +68,10 @@ Where *InfoView* could be something like:
         body += "<table><tr><th>Name</th><th>Value</th>\n";
         foreach (var param in request.ServerParameters)
         {
-            body += string.Format("<tr><td>{0}</td><td>{1}</td></tr>\n", param.Key, param.Value);
+            body += string.Format(
+                            "<tr><td>{0}</td><td>{1}</td></tr>\n",
+                            param.Key, param.Value
+                        );
         }
         body += "</table>\n";
         body += "</body></html>\n";
@@ -84,6 +87,8 @@ If you run this program and set up your web server properly (see below), you sho
 
 ## Web server configuration
 
+Web2Sharp relies on getting certain FastCGI parameters from the web server.
+
 Refer to your web server documentation for configuration details:
 
  * [nginx documentation](http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html)
@@ -96,7 +101,7 @@ For nginx, add this to pass all requests to your FastCGI application:
         fastcgi_pass   127.0.0.1:19000;
     }
 
-Where fastcgi_params is a file in your nginx config folder, containing something like:
+Where fastcgi_params is a file in your nginx config folder, containing at least these parameters (you can add more if you need to):
 
     fastcgi_param   QUERY_STRING            $query_string;
     fastcgi_param   REQUEST_METHOD          $request_method;
