@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Web2Sharp.Templates;
+
 namespace Web2Sharp.Demo
 {
     class Program
@@ -16,6 +18,7 @@ namespace Web2Sharp.Demo
             // Define the URL patterns
             app.AddUrlPattern("^/$", (request) => new HttpResponse("<h1>Hello World</h1>"));
             app.AddUrlPattern("^/info$", InfoView);
+            app.AddUrlPattern("^/templateTest$", TemplateView);
 
             // Start accepting requests from the web server.
             // This method never returns!
@@ -58,6 +61,22 @@ namespace Web2Sharp.Demo
             // We could also return non-HTML content or error codes here
             // by setting the parameters in the HttpResponse constructor.
             return new HttpResponse(body);
+        }
+
+        static Template DemoTemplate = Templates.TemplateLoader.FromFile("DemoTemplate.html");
+
+        static HttpResponse TemplateView(Web2Sharp.HttpRequest request)
+        {
+            var context = new Dictionary<string, object>
+            {
+                ["heading"] = "Hello World",
+                ["username"] = "Max Power",
+            };
+
+
+            var response = DemoTemplate(context);
+
+            return new HttpResponse(response);
         }
     }
 }
