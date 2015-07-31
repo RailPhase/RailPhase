@@ -13,12 +13,13 @@ namespace Web2Sharp.Templates
             var s = new StringBuilder();
             s.AppendLine("// Automagically generated code by Web2Sharp.Templates.TemplateParser");
             s.AppendLine("using System.Text;");
+            s.AppendLine("using System.Collections.Generic;");
             s.AppendLine("namespace Web2Sharp.TemplateCache {");
-            s.AppendLine("public class " + name + ": ITemplate {");
-            s.AppendLine("public string Render(IDictionary<string, object> context) {");
+            s.AppendLine("public class " + name + " {");
+            s.AppendLine("public static string Render(IDictionary<string, object> context) {");
             s.AppendLine("StringBuilder output = new StringBuilder();");
 
-            CompileFragment(template, s);
+            ParseFragment(template, s);
 
             s.AppendLine("return output.ToString();");
             s.AppendLine("} // Build");
@@ -28,13 +29,12 @@ namespace Web2Sharp.Templates
             return s.ToString();
         }
 
-        static void CompileFragment(string fragment, StringBuilder s)
+        static void ParseFragment(string fragment, StringBuilder s)
         {
             int textStart = 0;
             int tagStart = fragment.IndexOf("{{");
             while (tagStart >= 0)
             {
-                tagStart += 2;
                 int tagEnd = fragment.IndexOf("}}", textStart);
 
                 string text = fragment.Substring(textStart, tagStart-textStart);
@@ -45,6 +45,8 @@ namespace Web2Sharp.Templates
                     s.Append(EscapeText(text));
                     s.Append("\");\n");
                 }
+
+                tagStart += 2;
 
                 string tag = fragment.Substring(tagStart, tagEnd-tagStart);
                 tag = tag.Trim();
@@ -68,7 +70,12 @@ namespace Web2Sharp.Templates
 
         static string EscapeText(string text)
         {
-            //TODO: Actually escape the text
+            //TODO: Do this in a more performant way
+
+            text = text.Replace("\"", "\\\"");
+            text = text.Replace("\n", "\\n");
+            text = text.Replace("\r", "\\r");
+
             return text;
         }
     }
