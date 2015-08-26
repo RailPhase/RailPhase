@@ -18,7 +18,7 @@ namespace Web2Sharp.Demo
             // Define the URL patterns
             app.AddUrlPattern("^/$", (request) => new HttpResponse("<h1>Hello World</h1>"));
             app.AddUrlPattern("^/info$", InfoView);
-            app.AddUrlPattern("^/templateTest$", TemplateView);
+            app.AddUrlPattern("^/template-test$", TemplateView);
 
             // Start accepting requests from the web server.
             // This method never returns!
@@ -63,20 +63,22 @@ namespace Web2Sharp.Demo
             return new HttpResponse(body);
         }
 
-        static Template DemoTemplate = Templates.TemplateLoader.FromFile("DemoTemplate.html");
-
         static HttpResponse TemplateView(Web2Sharp.HttpRequest request)
         {
-            var context = new Dictionary<string, object>
+            var context = new DemoContext
             {
-                ["heading"] = "Hello World",
-                ["username"] = "Max Power",
+                Heading = "Welcome to the template demo!",
+                Username = "TestUser",
             };
 
-
-            var response = DemoTemplate(context);
-
-            return new HttpResponse(response);
+            var renderTemplate = Templates.Template.FromFile("DemoTemplate.html");
+            return new HttpResponse(renderTemplate(context));
         }
+    }
+
+    public class DemoContext
+    {
+        public string Heading;
+        public string Username;
     }
 }

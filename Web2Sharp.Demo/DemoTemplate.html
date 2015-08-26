@@ -1,12 +1,13 @@
-﻿<html>
+﻿{% context Web2Sharp.Demo.DemoContext,Web2Sharp.Demo %}
+<html>
 
 <head>
-  <title>The title is {{ heading }}</title>
+  <title>The title is {{ Heading }}</title>
 </head>
 
 <body>
-  <h1>{{ heading }}</h1>
-  <p>Hello, {{ username }}!</p>
+  <h1>{{ Heading }}</h1>
+  <p>Hello, {{ Username }}!</p>
 </body>
 
 </html>

@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 
+using Web2Sharp.Templates;
 
 namespace Web2Sharp
 {
@@ -19,6 +20,19 @@ namespace Web2Sharp
 
         public void AddUrlPattern(UrlPattern pattern) { urlPatterns.Add(pattern); }
         public void AddUrlPattern(string pattern, View view) { urlPatterns.Add(new UrlPattern(pattern, view)); }
+        public void AddUrlPattern(string pattern, TemplateRenderer template)
+        {
+            AddUrlPattern(pattern, (request) =>
+            {
+                return new HttpResponse(template(new TemplateContext(request)));
+            });
+        }
+
+        public void AddUrlPattern(string pattern, string templateFile)
+        {
+            TemplateRenderer template = Template.FromFile(templateFile);
+            AddUrlPattern(pattern, template);
+        }
 
         public RawHttpResponse HandleRequest(HttpRequest request)
         {
