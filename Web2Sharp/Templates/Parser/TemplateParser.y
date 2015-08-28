@@ -89,25 +89,28 @@ tag_if_else: TAG_START_IF expr TAG_END content_opt  TAG_START_ELSE TAG_END conte
 ;
 tag_for: TAG_START_FOR varname KEY_IN expr TAG_END content_opt TAG_START_ENDFOR TAG_END
   {
-   $$ = "for( (" + $2 + ") in (" + $4 + ") )" + "\n{\n" + $6 + "\n}\n";
+   $$ = "foreach( var " + $2 + " in (" + $4 + ") )" + "\n{\n" + $6 + "\n}\n";
   }
   ;
 
 tag_using: TAG_START_USING expr TAG_END
   {
     ResultUsings.Add($2);
+    $$ = "";
   }
   ;
 
 tag_context: TAG_START_CONTEXT expr TAG_END
   {
     ResultContextType = $2;
+    $$ = "";
   }
   ;
 
 tag_extends: TAG_START_EXTENDS expr TAG_END
   {
     ResultExtends = $2;
+    $$ = "";
   }
   ;
 

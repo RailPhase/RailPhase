@@ -56,6 +56,7 @@
     <Compile Include="Templates\TemplateContext.cs" />
     <Compile Include="Templates\Template.cs" />
     <Compile Include="Templates\TemplateLoader.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FastCGI\FastCGI\FastCGI.csproj">

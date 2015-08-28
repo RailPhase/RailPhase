@@ -26,6 +26,7 @@ namespace Web2Sharp.Templates
             CSharpCodeProvider provider = new CSharpCodeProvider();
             CompilerParameters parameters = new CompilerParameters();
             parameters.GenerateInMemory = false;
+            parameters.CompilerOptions = "/optimize";
 
             parameters.ReferencedAssemblies.AddRange(assemblyReferences.ToArray());
 
@@ -69,7 +70,8 @@ namespace Web2Sharp.Templates
                 // Import all public fields and properties so that they are available locally
                 foreach (var field in contextType.GetFields())
                 {
-                    s.AppendLine("var " + field.Name + " = context." + field.Name + ";");
+                    if(!field.IsStatic)
+                        s.AppendLine("var " + field.Name + " = context." + field.Name + ";");
                 }
                 foreach (var property in contextType.GetProperties())
                 {
@@ -130,6 +132,9 @@ namespace Web2Sharp.Templates
             // Add custom usings from template
             foreach (var ns in parser.ResultUsings)
             {
+                var assembly = Utils.AssemblyByName(ns);
+                if (assembly != null)
+                    assemblyReferences.Add(assembly.Location);
                 s.AppendLine("using " + ns + ";");
             }
 

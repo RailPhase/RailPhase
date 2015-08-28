@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  KABUTO
-// DateTime: 26.08.2015 16:29:59
+// DateTime: 28.08.2015 17:21:37
 // UserName: Lukas
-// Input file <TemplateParser.y - 26.08.2015 16:29:41>
+// Input file <TemplateParser.y - 28.08.2015 17:21:19>
 
 // options: lines
 
@@ -198,7 +198,7 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
                //            TAG_START_ENDFOR, TAG_END
 #line 91 "TemplateParser.y"
   {
-   CurrentSemanticValue = "for( (" + ValueStack[ValueStack.Depth-7] + ") in (" + ValueStack[ValueStack.Depth-5] + ") )" + "\n{\n" + ValueStack[ValueStack.Depth-3] + "\n}\n";
+   CurrentSemanticValue = "foreach( var " + ValueStack[ValueStack.Depth-7] + " in (" + ValueStack[ValueStack.Depth-5] + ") )" + "\n{\n" + ValueStack[ValueStack.Depth-3] + "\n}\n";
   }
 #line default
         break;
@@ -206,46 +206,49 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
 #line 97 "TemplateParser.y"
   {
     ResultUsings.Add(ValueStack[ValueStack.Depth-2]);
+    CurrentSemanticValue = "";
   }
 #line default
         break;
       case 23: // tag_context -> TAG_START_CONTEXT, expr, TAG_END
-#line 103 "TemplateParser.y"
+#line 104 "TemplateParser.y"
   {
     ResultContextType = ValueStack[ValueStack.Depth-2];
+    CurrentSemanticValue = "";
   }
 #line default
         break;
       case 24: // tag_extends -> TAG_START_EXTENDS, expr, TAG_END
-#line 109 "TemplateParser.y"
+#line 111 "TemplateParser.y"
   {
     ResultExtends = ValueStack[ValueStack.Depth-2];
+    CurrentSemanticValue = "";
   }
 #line default
         break;
       case 26: // expr -> TEXT
-#line 117 "TemplateParser.y"
+#line 120 "TemplateParser.y"
   {
     CurrentSemanticValue = ValueStack[ValueStack.Depth-1];
   }
 #line default
         break;
       case 27: // expr -> expr, TEXT
-#line 121 "TemplateParser.y"
+#line 124 "TemplateParser.y"
   {
     CurrentSemanticValue = ValueStack[ValueStack.Depth-2] + ValueStack[ValueStack.Depth-1];
   }
 #line default
         break;
       case 28: // text -> TEXT
-#line 128 "TemplateParser.y"
+#line 131 "TemplateParser.y"
   {
     CurrentSemanticValue = ValueStack[ValueStack.Depth-1];
   }
 #line default
         break;
       case 29: // text -> text, TEXT
-#line 132 "TemplateParser.y"
+#line 135 "TemplateParser.y"
   {
     CurrentSemanticValue = ValueStack[ValueStack.Depth-2] + ValueStack[ValueStack.Depth-1];
   }
@@ -265,7 +268,7 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
         return CharToString((char)terminal);
   }
 
-#line 138 "TemplateParser.y"
+#line 141 "TemplateParser.y"
 #line default
 }
 }
