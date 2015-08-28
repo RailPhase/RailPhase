@@ -20,18 +20,18 @@ namespace Web2Sharp
 
         public void AddUrlPattern(UrlPattern pattern) { urlPatterns.Add(pattern); }
         public void AddUrlPattern(string pattern, View view) { urlPatterns.Add(new UrlPattern(pattern, view)); }
-        public void AddUrlPattern(string pattern, TemplateRenderer template)
+        public void AddUrlPattern(string pattern, TemplateRenderer template, string contentType = "text/html")
         {
             AddUrlPattern(pattern, (request) =>
             {
-                return new HttpResponse(template(new TemplateContext(request)));
+                return new HttpResponse(template(new TemplateContext(request)), contentType: contentType);
             });
         }
 
-        public void AddUrlPattern(string pattern, string templateFile)
+        public void AddUrlPattern(string pattern, string templateFile, string contentType = "text/html")
         {
             TemplateRenderer template = Template.FromFile(templateFile);
-            AddUrlPattern(pattern, template);
+            AddUrlPattern(pattern, template, contentType);
         }
 
         public RawHttpResponse HandleRequest(HttpRequest request)
