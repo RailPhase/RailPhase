@@ -1,5 +1,7 @@
 # Web2Sharp
 
+[![Build Status](https://travis-ci.org/LukasBoersma/Web2Sharp.svg?branch=master)](https://travis-ci.org/LukasBoersma/Web2Sharp)
+
 This library allows you to write web applications in .NET via FastCGI. The API is inspired by [Django](https://www.djangoproject.com/). Right now, this library has far less features, though.
 
 See below for a simple usage example.
