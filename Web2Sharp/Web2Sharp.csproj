@@ -36,8 +36,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FastCGI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FastCGI.1.0.0.0\lib\net45\FastCGI.dll</HintPath>
+    <Reference Include="FastCGI, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FastCGI.1.0.1.0\lib\net45\FastCGI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
