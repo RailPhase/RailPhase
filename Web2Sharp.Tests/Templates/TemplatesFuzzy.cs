@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Text;
 using System.Globalization;
 
@@ -9,7 +9,7 @@ using Web2Sharp.Templates;
 
 namespace Web2Sharp.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class TemplatesFuzzy
     {
         static Random rand = new Random();
@@ -26,7 +26,7 @@ namespace Web2Sharp.Tests
             return s.ToString();
         }
 
-        [TestMethod]
+        [Test]
         public void Templates_RandomInput()
         {
             for (int i = 0; i < 50; i++)

@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 
 using Web2Sharp;
@@ -9,10 +9,10 @@ using System.Collections.Generic;
 
 namespace Web2Sharp.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class Templates
     {
-        [TestMethod]
+        [Test]
         public void Templates_Basic()
         {
             var input = "Hello World!";
@@ -22,7 +22,7 @@ namespace Web2Sharp.Tests
         }
 
 
-        [TestMethod]
+        [Test]
         public void Templates_Encoding()
         {
             var input1 = "Some special chars: ☕☳üß - \n \r\n .,;(){}%$!\"";
@@ -39,7 +39,7 @@ namespace Web2Sharp.Tests
             Assert.AreEqual(input2, output2);
         }
 
-        [TestMethod]
+        [Test]
         public void Templates_Values()
         {
             var input = "{% context Web2Sharp.Tests.TestContext,Web2Sharp.Tests %}SomeString: {{ SomeString }}, SomeInteger: {{ SomeInteger }}";
@@ -54,7 +54,7 @@ namespace Web2Sharp.Tests
             Assert.AreEqual(output, "SomeString: Hello World!, SomeInteger: 12345");
         }
 
-        [TestMethod]
+        [Test]
         public void Templates_Empty_Template()
         {
             var input = "";
@@ -65,7 +65,7 @@ namespace Web2Sharp.Tests
             Assert.AreEqual(input, output);
         }
 
-        [TestMethod]
+        [Test]
         public void Templates_Files()
         {
             var context = new TestContext
@@ -98,7 +98,7 @@ namespace Web2Sharp.Tests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void Templates_Errors()
         {
             var brokenTemplates = new string[]
