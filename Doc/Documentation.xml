@@ -1,0 +1,615 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Web2Sharp</name>
+    </assembly>
+    <members>
+        <member name="T:Web2Sharp.HttpMethod">
+            <summary>
+            Specifies a Http Method.
+            </summary>
+        </member>
+        <member name="T:Web2Sharp.HttpRequest">
+            <summary>
+            Represents an incoming HTTP request.
+            </summary>
+        </member>
+        <member name="M:Web2Sharp.HttpRequest.#ctor(FastCGI.Request)">
+            <summary>
+            Creates a new request object.
+            </summary>
+            <param name="fcgiRequest"></param>
+        </member>
+        <member name="F:Web2Sharp.HttpRequest.FcgiRequest">
+            <summary>
+            The underlying FastCGI request. Contains some more detailed information.
+            </summary>
+        </member>
+        <member name="P:Web2Sharp.HttpRequest.ServerParameters">
+            <summary>
+            A dictionary of all HTTP parameters included in the request
+            </summary>
+        </member>
+        <member name="P:Web2Sharp.HttpRequest.GET">
+            <summary>
+            A dictionary of all GET parameters included in the request.
+            </summary>
+        </member>
+        <member name="P:Web2Sharp.HttpRequest.Uri">
+            <summary>
+            The URI of this request
+            </summary>
+        </member>
+        <member name="P:Web2Sharp.HttpRequest.Body">
+            <summary>
+            The HTTP body of the request.
+            </summary>
+        </member>
+        <member name="P:Web2Sharp.HttpRequest.Method">
+            <summary>
+            The HTTP method of the request.
+            </summary>
+        </member>
+        <member name="T:Web2Sharp.RawHttpResponse">
+            <summary>
+            Base class for HTTP responses. Use <see cref="T:Web2Sharp.HttpResponse"/> if you want to create a simple HTTP response.
+            </summary>
+            <seealso cref="T:Web2Sharp.HttpResponse"/>
+        </member>
+        <member name="M:Web2Sharp.RawHttpResponse.#ctor(System.String)">
+            <summary>
+            Creates a new raw http response, without any headers pre-set.
+            </summary>
+            <param name="body">(Optional) The raw HTTP body, including any headers. You can omit this parameter and set the <see cref="F:Web2Sharp.RawHttpResponse.Body"/> later.</param>
+        </member>
+        <member name="F:Web2Sharp.RawHttpResponse.Body">
+            <summary>
+            The raw body of the HTTP response, including all headers.
+            </summary>
+        </member>
+        <member name="T:Web2Sharp.HttpResponse">
+            <summary>
+            Represents a HTTP response.
+            </summary>
+            <remarks>
+            If you need full control over the raw response content, use <see cref="T:Web2Sharp.RawHttpResponse"/> instead.
+            </remarks>
+        </member>
+        <member name="M:Web2Sharp.HttpResponse.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Creates a HTTP response, with the most important headers already set.
+            </summary>
+            <remarks>
+            If you need full control over the raw response content, use <see cref="T:Web2Sharp.RawHttpResponse"/> instead.
+            </remarks>
+            <param name="body">The content of the response, not including any headers.</param>
+            <param name="status">(Optional) The HTTP status code. Default is "200 OK".</param>
+            <param name="contentType">(Optional) The HTTP content-type. Default is "text/html".</param>
+            <param name="additionalHeaders">(Optional) Any additional headers, in raw HTTP format.</param>
+        </member>
+        <member name="T:Web2Sharp.View">
+            <summary>
+            A view handles a request and returns a response.
+            </summary>
+            <remarks>
+            Views are the main 
+            </remarks>
+            <param name="request">The HTTP request to handle.</param>
+            <returns>Returns a RawHttpResponse object (usually HttpResponse).</returns>
+        </member>
+        <member name="T:Web2Sharp.App">
+            <summary>
+            The main class for Web2Sharp web applications.
+            </summary>
+        </member>
+        <member name="M:Web2Sharp.App.AddUrlPattern(Web2Sharp.UrlPattern)">
+            <summary>
+            Adds a new URL pattern.
+            </summary>
+            <remarks>
+            When the App receives a request with a URL that matches the given pattern, the specified view will be called.
+            Please note that there are overloads of this method with more convenient signatures, like <see cref="M:Web2Sharp.App.AddUrlPattern(System.String,Web2Sharp.View)"/>.
+            </remarks>
+            <param name="pattern">The URL pattern to add.</param>
+            <seealso cref="T:Web2Sharp.UrlPattern"/>
+            <seealso cref="T:Web2Sharp.View"/>
+        </member>
+        <member name="M:Web2Sharp.App.AddUrlPattern(System.String,Web2Sharp.View)">
+            <summary>
+            Adds a new URL pattern.
+            </summary>
+            <remarks>
+            When the App receives a request with a URL that matches the given pattern, the specified view will be called.
+            </remarks>
+            <param name="pattern">A string in .NET Regex Syntax, specifying the URL pattern.</param>
+            <param name="view">The View that should be called when </param>
+            <seealso cref="T:Web2Sharp.UrlPattern"/>
+            <seealso cref="T:Web2Sharp.View"/>
+        </member>
+        <member name="M:Web2Sharp.App.AddUrlPattern(System.String,Web2Sharp.Templates.TemplateRenderer,System.String)">
+            <summary>
+            Adds a new URL pattern that responds to requests with a template.
+            </summary>
+            <param name="pattern">A string in .NET Regex Syntax, specifying the URL pattern.</param>
+            <param name="template">The TemplateRenderer that is used to render the response.</param>
+            <param name="contentType">The optional HTTP content-type. Default is "text/html".</param>
+        </member>
+        <member name="M:Web2Sharp.App.AddUrlPattern(System.String,System.String,System.String)">
+            <summary>
+            Adds a new URL pattern that responds to requests with a template.
+            </summary>
+            <param name="pattern">A string in .NET Regex Syntax, specifying the URL pattern.</param>
+            <param name="template">The path to the template file that is used to render the response.</param>
+            <param name="contentType">The optional HTTP content-type. Default is "text/html".</param>
+        </member>
+        <member name="M:Web2Sharp.App.HandleRequest(Web2Sharp.HttpRequest)">
+            <summary>
+            Handles an incoming HTTP request. You usually do not need to call this.
+            </summary>
+            <remarks>
+            When called, this method will go through the registered URL patterns and pass the request to the view of the pattern that matches first.
+            If not URL pattern matches the URL of the request, a 404 page is returned.
+            </remarks>
+            <param name="request">The HTTPRequest to handle</param>
+            <returns>Returns a HTTPResponse, generated by one of the registered URL patterns, or a 404 response if no pattern matches.</returns>
+        </member>
+        <member name="M:Web2Sharp.App.ReceiveFcgiRequest(System.Object,FastCGI.Request)">
+            <summary>
+            Handles an incoming FastCGI request. You usually do not need to call this.
+            </summary>
+        </member>
+        <member name="M:Web2Sharp.App.Run(System.Int32)">
+            <summary>
+            Starts listening as a FastCGI client. This method never returns! 
+            </summary>
+            <remarks>This method starts the FastCGI client and will respond to any requests that are received over FastCGI. Any URL patterns have to be registered before calling this, because this method never returns.</remarks>
+            <param name="port">The port for the FastCGI client.</param>
+        </member>
+        <member name="T:Web2Sharp.UrlPattern">
+            <summary>
+            Represents a URL pattern, used by the <see cref="T:Web2Sharp.App"/> class to handle incoming requests.
+            </summary>
+            <seealso cref="M:Web2Sharp.App.AddUrlPattern(Web2Sharp.UrlPattern)"/>
+        </member>
+        <member name="M:Web2Sharp.UrlPattern.#ctor(System.Text.RegularExpressions.Regex,Web2Sharp.View)">
+            <summary>
+            Creates a new URL pattern.
+            </summary>
+            <param name="pattern">The regular expression for the URL pattern.</param>
+            <param name="view">The view that should be called for requests that match the pattern.</param>
+        </member>
+        <member name="M:Web2Sharp.UrlPattern.#ctor(System.String,Web2Sharp.View)">
+            <summary>
+            Creates a new URL pattern.
+            </summary>
+            <param name="pattern">The regular expression (in .NET Regex syntax) for the URL pattern.</param>
+            <param name="view">The view that should be called for requests that match the pattern.</param>
+        </member>
+        <member name="F:Web2Sharp.UrlPattern.Pattern">
+            <summary>
+            The regular expression for the URL pattern.
+            </summary>
+        </member>
+        <member name="F:Web2Sharp.UrlPattern.View">
+            <summary>
+            The view that should be called for requests that match the pattern.
+            </summary>
+        </member>
+        <member name="T:Web2Sharp.Templates.TemplateParserException">
+            <summary>
+            Represents a syntax error in a template.
+            </summary>
+            <seealso cref="M:Web2Sharp.Templates.Template.FromString(System.String)"/>
+            <seealso cref="M:Web2Sharp.Templates.Template.FromFile(System.String)"/>
+        </member>
+        <member name="T:Web2Sharp.Templates.Template">
+            <summary>
+            Provides functions to work with templates.
+            </summary>
+        </member>
+        <member name="M:Web2Sharp.Templates.Template.FromFile(System.String)">
+            <summary>
+            Loads a <see cref="T:Web2Sharp.Templates.TemplateRenderer"/> from a file.
+            </summary>
+        </member>
+        <member name="M:Web2Sharp.Templates.Template.FromString(System.String)">
+            <summary>
+            Loads a <see cref="T:Web2Sharp.Templates.TemplateRenderer"/> from a string.
+            </summary>
+        </member>
+        <member name="T:Web2Sharp.Templates.TemplateRenderer">
+            <summary>
+            A template renderer takes a context object and outputs a string.
+            </summary>
+            <param name="context">The context object for the template renderer.</param>
+            <returns>Returns the template, rendered into a string.</returns>
+            <seealso cref="M:Web2Sharp.Templates.Template.FromFile(System.String)"/>
+            <seealso cref="M:Web2Sharp.Templates.Template.FromString(System.String)"/>
+        </member>
+        <member name="T:Web2Sharp.Templates.BlockRenderer">
+            <summary>
+            A block renderer is used internally to render single blocks inside of templates.
+            </summary>
+            <param name="context">The context object for the template renderer.</param>
+            <param name="blockRenderers"></param>
+            <returns>Returns the block, rendered into a string.</returns>
+        </member>
+        <member name="M:Web2Sharp.Utils.MakeRelativePath(System.String,System.String)">
+            <summary>
+            Creates a relative path from one file or folder to another.
+            </summary>
+            <param name="absPath">Absolute path.</param>
+            <param name="relTo">Directory that defines the start of the relative path.</param> 
+            <returns>The relative path from the start directory to the end path.</returns>
+        </member>
+        <member name="T:QUT.GplexBuffers.StringBuffer">
+            <summary>
+            This class reads characters from a single string as
+            required, for example, by Visual Studio language services
+            </summary>
+        </member>
+        <member name="M:QUT.GplexBuffers.BuildBuffer.Mark">
+            <summary>
+            Marks a conservative lower bound for the buffer,
+            allowing space to be reclaimed.  If an application 
+            needs to call GetString at arbitrary past locations 
+            in the input stream, Mark() is not called.
+            </summary>
+        </member>
+        <member name="M:QUT.GplexBuffers.BuildBuffer.Read">
+            <summary>
+            Read returns the ordinal number of the next char, or 
+            EOF (-1) for an end of stream.  Note that the next
+            code point may require *two* calls of Read().
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:QUT.GplexBuffers.Guesser">
+            <summary>
+            This class provides a simple finite state automaton that
+            scans the file looking for (1) valid UTF-8 byte patterns,
+            (2) bytes >= 0x80 which are not part of a UTF-8 sequence.
+            The method then guesses whether it is UTF-8 or maybe some 
+            local machine default encoding.  This works well for the
+            various Latin encodings.
+            </summary>
+        </member>
+        <member name="T:QUT.Gppg.ShiftReduceParser`2">
+            <summary>
+            Abstract class for GPPG shift-reduce parsers.
+            Parsers generated by GPPG derive from this base
+            class, overriding the abstract Initialize() and
+            DoAction() methods.
+            </summary>
+            <typeparam name="TValue">Semantic value type</typeparam>
+            <typeparam name="TSpan">Location type</typeparam>
+        </member>
+        <member name="P:QUT.Gppg.ShiftReduceParser`2.Scanner">
+            <summary>
+            The abstract scanner for this parser.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.#ctor(QUT.Gppg.AbstractScanner{`0,`1})">
+            <summary>
+            Constructor for base class
+            </summary>
+            <param name="scanner">Scanner instance for this parser</param>
+        </member>
+        <member name="F:QUT.Gppg.ShiftReduceParser`2.CurrentSemanticValue">
+            <summary>
+            The current value of the "$$" symbolic variable in the parser
+            </summary>
+        </member>
+        <member name="F:QUT.Gppg.ShiftReduceParser`2.CurrentLocationSpan">
+            <summary>
+            The current value of the "@$" symbolic variable in the parser
+            </summary>
+        </member>
+        <member name="P:QUT.Gppg.ShiftReduceParser`2.ValueStack">
+            <summary>
+            The stack of semantic value (YYSTYPE) values.
+            </summary>
+        </member>
+        <member name="P:QUT.Gppg.ShiftReduceParser`2.LocationStack">
+            <summary>
+            The stack of location value (YYLTYPE) varlues.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.InitRules(QUT.Gppg.Rule[])">
+            <summary>
+            Initialization method to allow derived classes
+            to insert the rule list into this base class.
+            </summary>
+            <param name="rules">The array of Rule objects</param>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.InitStates(QUT.Gppg.State[])">
+            <summary>
+            Initialization method to allow derived classes to
+            insert the states table into this base class.
+            </summary>
+            <param name="states">The pre-initialized states table</param>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.InitStateTable(System.Int32)">
+            <summary>
+            OBSOLETE FOR VERSION 1.4.0
+            </summary>
+            <param name="size"></param>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.InitSpecialTokens(System.Int32,System.Int32)">
+            <summary>
+            Initialization method to allow derived classes
+            to insert the special value for the error and EOF tokens.
+            </summary>
+            <param name="err">The error state ordinal</param>
+            <param name="end">The EOF stat ordinal</param>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.InitNonTerminals(System.String[])">
+            <summary>
+            Initialization method to allow derived classes to
+            insert the non-terminal symbol names into this base class.
+            </summary>
+            <param name="names">Non-terminal symbol names</param>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.YYAccept">
+            <summary>
+            Force parser to terminate, returning "true"
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.YYAbort">
+            <summary>
+            Force parser to terminate, returning "false"
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.YYError">
+            <summary>
+            Force parser to terminate, returning
+            "false" if error recovery fails.
+            </summary>
+        </member>
+        <member name="P:QUT.Gppg.ShiftReduceParser`2.YYRecovering">
+            <summary>
+            Check if parser in error recovery state.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.Initialize">
+            <summary>
+            Abstract base method. ShiftReduceParser calls this
+            to initialize the base class data structures.  Concrete
+            parser classes must override this method.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.Parse">
+            <summary>
+            Main entry point of the Shift-Reduce Parser.
+            </summary>
+            <returns>True if parse succeeds, else false for
+            unrecoverable errors</returns>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.DoAction(System.Int32)">
+            <summary>
+            Execute the selected action from array.
+            Must be overriden in derived classes.
+            </summary>
+            <param name="actionNumber">Index of the action to perform</param>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.yyclearin">
+            <summary>
+            Traditional YACC method.  Discards the next input token.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.yyerrok">
+            <summary>
+            Tradional YACC method. Clear the "recovering" flag.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.AddState(System.Int32,QUT.Gppg.State)">
+            <summary>
+            OBSOLETE FOR VERSION 1.4.0
+            Method used by derived types to insert new
+            state instances in the "states" array.
+            </summary>
+            <param name="stateNumber">index of the state</param>
+            <param name="state">data for the state</param>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.TerminalToString(System.Int32)">
+            <summary>
+            Abstract state class naming terminal symbols.
+            This is overridden by derived classes with the
+            name (or alias) to be used in error messages.
+            </summary>
+            <param name="terminal">The terminal ordinal</param>
+            <returns></returns>
+        </member>
+        <member name="M:QUT.Gppg.ShiftReduceParser`2.CharToString(System.Char)">
+            <summary>
+            Return text representation of argument character
+            </summary>
+            <param name="input">The character to convert</param>
+            <returns>String representation of the character</returns>
+        </member>
+        <member name="T:QUT.Gppg.IMerge`1">
+            <summary>
+            Classes implementing this interface must supply a
+            method that merges two location objects to return
+            a new object of the same type.
+            GPPG-generated parsers have the default location
+            action equivalent to "@$ = @1.Merge(@N);" where N
+            is the right-hand-side length of the production.
+            </summary>
+            <typeparam name="TSpan">The Location type</typeparam>
+        </member>
+        <member name="M:QUT.Gppg.IMerge`1.Merge(`0)">
+            <summary>
+            Interface method that creates a location object from
+            the current and last object.  Typically used to create
+            a location object extending from the start of the @1
+            object to the end of the @N object.
+            </summary>
+            <param name="last">The lexically last object to merge</param>
+            <returns>The merged location object</returns>
+        </member>
+        <member name="T:QUT.Gppg.LexLocation">
+            <summary>
+            This is the default class that carries location
+            information from the scanner to the parser.
+            If you don't declare "%YYLTYPE Foo" the parser
+            will expect to deal with this type.
+            </summary>
+        </member>
+        <member name="P:QUT.Gppg.LexLocation.StartLine">
+            <summary>
+            The line at which the text span starts.
+            </summary>
+        </member>
+        <member name="P:QUT.Gppg.LexLocation.StartColumn">
+            <summary>
+            The column at which the text span starts.
+            </summary>
+        </member>
+        <member name="P:QUT.Gppg.LexLocation.EndLine">
+            <summary>
+            The line on which the text span ends.
+            </summary>
+        </member>
+        <member name="P:QUT.Gppg.LexLocation.EndColumn">
+            <summary>
+            The column of the first character
+            beyond the end of the text span.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.LexLocation.#ctor">
+            <summary>
+            Default no-arg constructor.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.LexLocation.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Constructor for text-span with given start and end.
+            </summary>
+            <param name="sl">start line</param>
+            <param name="sc">start column</param>
+            <param name="el">end line </param>
+            <param name="ec">end column</param>
+        </member>
+        <member name="M:QUT.Gppg.LexLocation.Merge(QUT.Gppg.LexLocation)">
+            <summary>
+            Create a text location which spans from the 
+            start of "this" to the end of the argument "last"
+            </summary>
+            <param name="last">The last location in the result span</param>
+            <returns>The merged span</returns>
+        </member>
+        <member name="T:QUT.Gppg.AbstractScanner`2">
+            <summary>
+            Abstract scanner class that GPPG expects its scanners to 
+            extend.
+            </summary>
+            <typeparam name="TValue">Semantic value type YYSTYPE</typeparam>
+            <typeparam name="TSpan">Source location type YYLTYPE</typeparam>
+        </member>
+        <member name="F:QUT.Gppg.AbstractScanner`2.yylval">
+            <summary>
+            Lexical value optionally set by the scanner. The value
+            is of the %YYSTYPE type declared in the parser spec.
+            </summary>
+        </member>
+        <member name="P:QUT.Gppg.AbstractScanner`2.yylloc">
+            <summary>
+            Current scanner location property. The value is of the
+            type declared by %YYLTYPE in the parser specification.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.AbstractScanner`2.yylex">
+            <summary>
+            Main call point for LEX-like scanners.  Returns an int
+            corresponding to the token recognized by the scanner.
+            </summary>
+            <returns>An int corresponding to the token</returns>
+        </member>
+        <member name="M:QUT.Gppg.AbstractScanner`2.yyerror(System.String,System.Object[])">
+            <summary>
+            Traditional error reporting provided by LEX-like scanners
+            to their YACC-like clients.
+            </summary>
+            <param name="format">Message format string</param>
+            <param name="args">Optional array of args</param>
+        </member>
+        <member name="T:QUT.Gppg.State">
+            <summary>
+            Encapsulated state for the parser.
+            Opaque to users, visible to the tool-generated code.
+            </summary>
+        </member>
+        <member name="F:QUT.Gppg.State.number">
+            <summary>
+            The index of this state in the states array.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.State.#ctor(System.Int32[],System.Int32[])">
+            <summary>
+            State transition data for this state. Pairs of elements of the 
+            goto array associate symbol ordinals with next state indices.
+            The actions array is passed to another constructor. 
+            </summary>
+            <param name="actions">The action list</param>c
+            <param name="goToList">Next state data</param>
+        </member>
+        <member name="M:QUT.Gppg.State.#ctor(System.Int32[])">
+            <summary>
+            Action data for this state. Pairs of elements of the 
+            action array associate action ordinals with each of
+            those symbols that have actions in the current state.
+            </summary>
+            <param name="actions">The action array</param>
+        </member>
+        <member name="M:QUT.Gppg.State.#ctor(System.Int32)">
+            <summary>
+            Set the default action for this state.
+            </summary>
+            <param name="defaultAction">Ordinal of the default action</param>
+        </member>
+        <member name="M:QUT.Gppg.State.#ctor(System.Int32,System.Int32[])">
+            <summary>
+            Set the default action and the state transition table.
+            </summary>
+            <param name="defaultAction">The default action</param>
+            <param name="goToList">Transitions from this state</param>
+        </member>
+        <member name="T:QUT.Gppg.Rule">
+            <summary>
+            Rule representation at runtime.
+            </summary>
+        </member>
+        <member name="M:QUT.Gppg.Rule.#ctor(System.Int32,System.Int32[])">
+            <summary>
+            Rule constructor.  This holds the ordinal of
+            the left hand side symbol, and the list of
+            right hand side symbols, in lexical order.
+            </summary>
+            <param name="left">The LHS non-terminal</param>
+            <param name="right">The RHS symbols, in lexical order</param>
+        </member>
+        <member name="T:QUT.Gppg.PushdownPrefixState`1">
+            <summary>
+            Stack utility for the shift-reduce parser.
+            GPPG parsers have three instances:
+            (1) The parser state stack, T = QUT.Gppg.State,
+            (2) The semantic value stack, T = TValue,
+            (3) The location stack, T = TSpan.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:QUT.Gppg.PushdownPrefixState`1.Item(System.Int32)">
+            <summary>
+            Indexer for values of the stack below the top.
+            </summary>
+            <param name="index">index of the element, starting from the bottom</param>
+            <returns>the selected element</returns>
+        </member>
+        <member name="P:QUT.Gppg.PushdownPrefixState`1.Depth">
+            <summary>
+            The current depth of the stack.
+            </summary>
+        </member>
+    </members>
+</doc>

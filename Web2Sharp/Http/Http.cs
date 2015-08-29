@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Web2Sharp
 {
+    /// <summary>
+    /// Specifies a Http Method.
+    /// </summary>
     public enum HttpMethod
     {
         GET,
@@ -15,8 +18,15 @@ namespace Web2Sharp
         UNKNOWN
     }
 
+    /// <summary>
+    /// Represents an incoming HTTP request.
+    /// </summary>
     public class HttpRequest
     {
+        /// <summary>
+        /// Creates a new request object.
+        /// </summary>
+        /// <param name="fcgiRequest"></param>
         public HttpRequest(FastCGI.Request fcgiRequest)
         {
             FcgiRequest = fcgiRequest;
@@ -60,12 +70,24 @@ namespace Web2Sharp
             }
         }
 
+        /// <summary>
+        /// The underlying FastCGI request. Contains some more detailed information.
+        /// </summary>
         public readonly FastCGI.Request FcgiRequest;
 
+        /// <summary>
+        /// A dictionary of all HTTP parameters included in the request
+        /// </summary>
         public IDictionary<string,string> ServerParameters { get { return FcgiRequest.Parameters; } }
 
+        /// <summary>
+        /// A dictionary of all GET parameters included in the request.
+        /// </summary>
         public Dictionary<string,string> GET { get; private set; }
 
+        /// <summary>
+        /// The URI of this request
+        /// </summary>
         public string Uri
         {
             get
@@ -74,6 +96,9 @@ namespace Web2Sharp
             }
         }
 
+        /// <summary>
+        /// The HTTP body of the request.
+        /// </summary>
         public string Body
         {
             get
@@ -82,22 +107,52 @@ namespace Web2Sharp
             }
         }
 
+        /// <summary>
+        /// The HTTP method of the request.
+        /// </summary>
         public HttpMethod Method { get; private set; }
     }
 
+    /// <summary>
+    /// Base class for HTTP responses. Use <see cref="HttpResponse"/> if you want to create a simple HTTP response.
+    /// </summary>
+    /// <seealso cref="HttpResponse"/>
     public class RawHttpResponse
     {
-        public RawHttpResponse(string body)
+        /// <summary>
+        /// Creates a new raw http response, without any headers pre-set.
+        /// </summary>
+        /// <param name="body">(Optional) The raw HTTP body, including any headers. You can omit this parameter and set the <see cref="Body"/> later.</param>
+        public RawHttpResponse(string body="")
         {
             Body = body;
         }
+
+        /// <summary>
+        /// The raw body of the HTTP response, including all headers.
+        /// </summary>
         public string Body;
     }
 
+    /// <summary>
+    /// Represents a HTTP response.
+    /// </summary>
+    /// <remarks>
+    /// If you need full control over the raw response content, use <see cref="RawHttpResponse"/> instead.
+    /// </remarks>
     public class HttpResponse: RawHttpResponse
     {
-        public HttpResponse(string body, string status="200 OK", string contentType="text/html", string additionalHeaders=""):
-            base("")
+        /// <summary>
+        /// Creates a HTTP response, with the most important headers already set.
+        /// </summary>
+        /// <remarks>
+        /// If you need full control over the raw response content, use <see cref="RawHttpResponse"/> instead.
+        /// </remarks>
+        /// <param name="body">The content of the response, not including any headers.</param>
+        /// <param name="status">(Optional) The HTTP status code. Default is "200 OK".</param>
+        /// <param name="contentType">(Optional) The HTTP content-type. Default is "text/html".</param>
+        /// <param name="additionalHeaders">(Optional) Any additional headers, in raw HTTP format.</param>
+        public HttpResponse(string body, string status="200 OK", string contentType="text/html", string additionalHeaders="")
         {
             Body = "Status: "+status+"\n";
             Body += "Content-Type: "+contentType+"\n";

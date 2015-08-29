@@ -9,6 +9,11 @@ using Microsoft.CSharp;
 
 namespace Web2Sharp.Templates
 {
+    /// <summary>
+    /// Represents a syntax error in a template.
+    /// </summary>
+    /// <seealso cref="Template.FromString(string)"/>
+    /// <seealso cref="Template.FromFile(string)"/>
     public class TemplateParserException: Exception
     {
         public TemplateParserException(string message):
@@ -20,7 +25,7 @@ namespace Web2Sharp.Templates
 
     public abstract partial class Template
     {
-        public static Type CompileCsharpTemplate(string csharp, string name, List<string> assemblyReferences)
+        internal static Type CompileCsharpTemplate(string csharp, string name, List<string> assemblyReferences)
         {
             // Compile the given code and load it as an assembly without writing to a file.
             CSharpCodeProvider provider = new CSharpCodeProvider();
@@ -94,7 +99,7 @@ namespace Web2Sharp.Templates
             return s.ToString();
         }
 
-        public static Type ParseTemplateString(string template, string name)
+        internal static Type ParseTemplateString(string template, string name)
         {
             var parser = Parser.Parser.FromText(template);
             var success = parser.Parse();

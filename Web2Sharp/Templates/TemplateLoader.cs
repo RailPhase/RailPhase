@@ -7,14 +7,23 @@ using System.IO;
 
 namespace Web2Sharp.Templates
 {
+    /// <summary>
+    /// Provides functions to work with templates.
+    /// </summary>
     public abstract partial class Template
     {
+        /// <summary>
+        /// Loads a <see cref="TemplateRenderer"/> from a file.
+        /// </summary>
         public static TemplateRenderer FromFile(string filename)
         {
             Type t;
             return LoadFile(filename, out t);
         }
 
+        /// <summary>
+        /// Loads a <see cref="TemplateRenderer"/> from a string.
+        /// </summary>
         public static TemplateRenderer FromString(string text)
         {
             Type t;
