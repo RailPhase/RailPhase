@@ -24,7 +24,7 @@ namespace Web2Sharp
         {
             AddUrlPattern(pattern, (request) =>
             {
-                return new HttpResponse(template(new TemplateContext(request)), contentType: contentType);
+                return new HttpResponse(template(null), contentType: contentType);
             });
         }
 

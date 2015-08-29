@@ -15,6 +15,12 @@ namespace Web2Sharp.Templates
             return LoadFile(filename, out t);
         }
 
+        public static TemplateRenderer FromString(string text)
+        {
+            Type t;
+            return CompileTemplateString(text, out t);
+        }
+
         static long TemplateNameCounter = 0;
         static Dictionary<string, TemplateRenderer> TemplateRendererFileCache = new Dictionary<string, TemplateRenderer>();
         static Dictionary<string, Type> TemplateTypeFileCache = new Dictionary<string, Type>();
@@ -38,21 +44,22 @@ namespace Web2Sharp.Templates
                     throw new System.IO.FileNotFoundException(filename);
                 }
 
-                TemplateRenderer templateRenderer = CompileTemplateFile(normalizedFilename, out templateType);
+                string templateText = File.ReadAllText(normalizedFilename);
+                Type type;
+                TemplateRenderer templateRenderer = CompileTemplateString(templateText, out type);
                 TemplateRendererFileCache[normalizedFilename] = templateRenderer;
+                TemplateTypeFileCache[normalizedFilename] = type;
+                templateType = type;
                 return templateRenderer;
             }
         }
 
-        static TemplateRenderer CompileTemplateFile(string filename, out Type templateType)
+        static TemplateRenderer CompileTemplateString(string templateText, out Type templateType)
         {
             TemplateNameCounter++;
             string templateName = "Template" + TemplateNameCounter.ToString();
 
-            string templateText = File.ReadAllText(filename);
-
-            Type type = CompileTemplateString(templateText, templateName);
-            TemplateTypeFileCache[filename] = type;
+            Type type = ParseTemplateString(templateText, templateName);
             TemplateRenderer renderDelegate = (TemplateRenderer)type.GetMethod("Render").CreateDelegate(typeof(TemplateRenderer));
 
             templateType = type;

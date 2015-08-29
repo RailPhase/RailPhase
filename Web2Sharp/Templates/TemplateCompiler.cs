@@ -94,10 +94,15 @@ namespace Web2Sharp.Templates
             return s.ToString();
         }
 
-        public static Type CompileTemplateString(string template, string name)
+        public static Type ParseTemplateString(string template, string name)
         {
             var parser = Parser.Parser.FromText(template);
-            parser.Parse();
+            var success = parser.Parse();
+
+            if(!success)
+            {
+                throw new TemplateParserException("Syntax Error!");
+            }
             
             Type contextType = null;
 

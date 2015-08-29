@@ -53,7 +53,6 @@
     <Compile Include="Templates\Parser\ShiftReduceParserCode.cs" />
     <Compile Include="Templates\Parser\TemplateParser.cs" />
     <Compile Include="Templates\TemplateCompiler.cs" />
-    <Compile Include="Templates\TemplateContext.cs" />
     <Compile Include="Templates\Template.cs" />
     <Compile Include="Templates\TemplateLoader.cs" />
     <Compile Include="Utils.cs" />

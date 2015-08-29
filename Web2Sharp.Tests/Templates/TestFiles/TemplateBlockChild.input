@@ -1,0 +1,5 @@
+﻿{% extends Templates/TestFiles/TemplateBlockBase.input %}
+
+This should be ignored.
+
+{% block content %}And here comes some totally different content.{% endblock %}

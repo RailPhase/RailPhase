@@ -15,16 +15,26 @@ namespace Web2Sharp.Templates.Parser
 
         static string EscapeText(string text)
         {
+            var output = new StringBuilder();
             //TODO: Do this in a more performant way
             if (text == null)
                 return null;
 
-            text = text.Replace("\\", "\\\\");
-            text = text.Replace("\"", "\\\"");
-            text = text.Replace("\n", "\\n");
-            text = text.Replace("\r", "\\r");
+            for(int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
 
-            return text;
+                if (c == '"')
+                    output.Append("\\\"");
+                else if (c == '\\')
+                    output.Append("\\\\");
+                else if ((int)c >= 32 && (int)c <= 126)
+                    output.Append(c);
+                else
+                    output.Append("\\u" + ((int)c).ToString("x4"));
+            }
+
+            return output.ToString();
         }
 
         /*
