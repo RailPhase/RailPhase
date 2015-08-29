@@ -85,7 +85,7 @@
             <param name="body">The content of the response, not including any headers.</param>
             <param name="status">(Optional) The HTTP status code. Default is "200 OK".</param>
             <param name="contentType">(Optional) The HTTP content-type. Default is "text/html".</param>
-            <param name="additionalHeaders">(Optional) Any additional headers, in raw HTTP format.</param>
+            <param name="additionalHeaders">(Optional) Any additional headers, in raw HTTP format. These must NOT end with a newline.</param>
         </member>
         <member name="T:Web2Sharp.View">
             <summary>
@@ -238,9 +238,19 @@
             <summary>
             Creates a relative path from one file or folder to another.
             </summary>
-            <param name="absPath">Absolute path.</param>
-            <param name="relTo">Directory that defines the start of the relative path.</param> 
+            <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
+            <param name="fromPath">Contains the directory that defines the start of the relative path.</param>
             <returns>The relative path from the start directory to the end path.</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.UriFormatException"></exception>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:Web2Sharp.Utils.SystemToUnixPath(System.String)">
+            <summary>
+            Converts a system path into unix format. Performs no action when called on a unix system.
+            </summary>
+            <param name="path">A path, as returned by some System.IO.* method</param>
+            <returns>Returns the given path, with the directory separator ('\' on Windows) replaced by '/'.</returns>
         </member>
         <member name="T:QUT.GplexBuffers.StringBuffer">
             <summary>

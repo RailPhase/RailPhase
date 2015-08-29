@@ -92,7 +92,7 @@ namespace Web2Sharp
         {
             get
             {
-                return FcgiRequest.Parameters["REQUEST_URI"];
+                return ServerParameters["REQUEST_URI"];
             }
         }
 
@@ -151,11 +151,12 @@ namespace Web2Sharp
         /// <param name="body">The content of the response, not including any headers.</param>
         /// <param name="status">(Optional) The HTTP status code. Default is "200 OK".</param>
         /// <param name="contentType">(Optional) The HTTP content-type. Default is "text/html".</param>
-        /// <param name="additionalHeaders">(Optional) Any additional headers, in raw HTTP format.</param>
+        /// <param name="additionalHeaders">(Optional) Any additional headers, in raw HTTP format. These must NOT end with a newline.</param>
         public HttpResponse(string body, string status="200 OK", string contentType="text/html", string additionalHeaders="")
         {
             Body = "Status: "+status+"\n";
             Body += "Content-Type: "+contentType+"\n";
+            Body += additionalHeaders+"\n";
             Body += "\n";
             Body += body;
         }

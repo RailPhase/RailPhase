@@ -29,9 +29,9 @@ namespace Web2Sharp.Tests
         [Test]
         public void Templates_RandomInput()
         {
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 10; i++)
             {
-                var input = generateRandomString(1024);
+                var input = generateRandomString(4096);
                 if (!input.Contains("{{") && !input.Contains("{%"))
                 {
                     var render = Template.FromString(input);
