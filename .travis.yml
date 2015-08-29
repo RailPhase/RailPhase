@@ -1,0 +1,8 @@
+language: csharp
+solution: Web2Sharp.sln
+install:
+  - nuget restore Web2Sharp.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release Web2Sharp.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Web2Sharp.Tests/bin/Release/Web2Sharp.Tests.dll
