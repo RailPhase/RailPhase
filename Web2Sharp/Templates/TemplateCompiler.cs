@@ -56,7 +56,7 @@ namespace Web2Sharp.Templates
             return templateClass;
         }
 
-        static string BuildBlock(string name, string content, Type contextType, IEnumerable<string> localBlocks, string templateName)
+        static string BuildBlock(string name, string content, Type contextType, IEnumerable<string> localBlocks, string templateName, List<string> assemblyReferences)
         {
             var s = new StringBuilder();
 
@@ -75,13 +75,23 @@ namespace Web2Sharp.Templates
                 // Import all public fields and properties so that they are available locally
                 foreach (var field in contextType.GetFields())
                 {
-                    if(!field.IsStatic)
+                    if (!field.IsStatic)
+                    {
                         s.AppendLine("var " + field.Name + " = context." + field.Name + ";");
+                        if(!assemblyReferences.Contains(field.FieldType.Assembly.Location))
+                        {
+                            assemblyReferences.Add(field.FieldType.Assembly.Location);
+                        }
+                    }
                 }
                 foreach (var property in contextType.GetProperties())
                 {
                     if (property.CanRead)
                         s.AppendLine("var " + property.Name + " = context." + property.Name + ";");
+                    if (!assemblyReferences.Contains(property.PropertyType.Assembly.Location))
+                    {
+                        assemblyReferences.Add(property.PropertyType.Assembly.Location);
+                    }
                 }
             }
             else
@@ -155,23 +165,21 @@ namespace Web2Sharp.Templates
             // Implement blocks as callable functions
             foreach (var block in parser.ResultBlocks)
             {
-                s.Append(BuildBlock( "Block_" + block.Key, block.Value, contextType, parser.ResultBlocks.Keys, name));
+                s.Append(BuildBlock("Block_" + block.Key, block.Value, contextType, parser.ResultBlocks.Keys, name, assemblyReferences));
             }
 
             if (extendsType == null)
             {
-                s.Append(BuildBlock("Block_Root", parser.ResultText, contextType, parser.ResultBlocks.Keys, name));
+                s.Append(BuildBlock("Block_Root", parser.ResultText, contextType, parser.ResultBlocks.Keys, name, assemblyReferences));
             }
             else
             {
                 // Extending Templates don't use their own root block, but call the one of the extended template, with the local blocks as overrides.
                 string extendingContent = "return " + extendsType.FullName + ".Block_Root(context, blockRenderers);";
-                s.Append(BuildBlock("Block_Root", extendingContent, contextType, parser.ResultBlocks.Keys, name));
+                s.Append(BuildBlock("Block_Root", extendingContent, contextType, parser.ResultBlocks.Keys, name, assemblyReferences));
             }
 
             s.AppendLine("public static string Render(object context) { return Block_Root(context, new Dictionary<string,BlockRenderer>()); }");
-
-
 
             s.AppendLine("} // class");
             s.AppendLine("} // namespace");
