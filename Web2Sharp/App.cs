@@ -24,6 +24,7 @@ namespace Web2Sharp
     /// <summary>
     /// The main class for Web2Sharp web applications.
     /// </summary>
+    /// <importance>10</importance>
     public class App
     {
         List<UrlPattern> urlPatterns = new List<UrlPattern>();

@@ -21,6 +21,7 @@ namespace Web2Sharp
     /// <summary>
     /// Represents an incoming HTTP request.
     /// </summary>
+    /// <importance>5</importance>
     public class HttpRequest
     {
         /// <summary>
