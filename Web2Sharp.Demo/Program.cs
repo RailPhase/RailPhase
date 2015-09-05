@@ -18,11 +18,10 @@ namespace Web2Sharp.Demo
             // Define the URL patterns
             app.AddUrlPattern("^/$", (request) => new HttpResponse("<h1>Hello World</h1>"));
             app.AddUrlPattern("^/info$", InfoView);
-            app.AddUrlPattern("^/template-test$", TemplateView);
 
-            // Start accepting requests from the web server.
+            // Start accepting requests from the web server on port 19000.
             // This method never returns!
-            app.Run();
+            app.Run(19000);
         }
 
         /// <summary>
@@ -30,49 +29,19 @@ namespace Web2Sharp.Demo
         /// </summary>
         static HttpResponse InfoView(Web2Sharp.HttpRequest request)
         {
-            // This is of course not the recommended way to generate HTML content,
-            // but it is the simplest way for this example.
+            // Get the template for the info page.
+            var render = Templates.Template.FromFile("InfoTemplate.html");
 
-            string body = "<html><head>\n";
-            body += @"<style>
-                        table {
-                            border-collapse: collapse;
-                        }
-
-                        table, th, td {
-                            border: 1px solid black;
-                        }
-                     </style>";
-
-            body += "</head><body>\n";
-            body += "<h1>Request Info Page</h1>\n";
-
-            // Print all server parameters into a table
-            body += "<h2>Server parameters</h2>\n";
-            body += "<table><tr><th>Name</th><th>Value</th>\n";
-            foreach (var param in request.ServerParameters)
-            {
-                body += string.Format("<tr><td>{0}</td><td>{1}</td></tr>\n", param.Key, request.GetParameterASCII(param.Key));
-            }
-            body += "</table>\n";
-            body += "</body></html>\n";
+            // Pass the HttpRequest as the template context, because we want
+            // to display information about the request. Normally, we would
+            // pass some custom object here, containing the information we
+            // want to display.
+            var body = render(request);
 
             // Return a simple Http response.
             // We could also return non-HTML content or error codes here
             // by setting the parameters in the HttpResponse constructor.
             return new HttpResponse(body);
-        }
-
-        static HttpResponse TemplateView(Web2Sharp.HttpRequest request)
-        {
-            var context = new DemoContext
-            {
-                Heading = "Welcome to the template demo!",
-                Username = "TestUser",
-            };
-
-            var renderTemplate = Templates.Template.FromFile("DemoTemplate.html");
-            return new HttpResponse(renderTemplate(context));
         }
     }
 
