@@ -18,7 +18,9 @@ If you think you found a bug, you can open an Issue on Github. If you make chang
 
 ## Documentation
 
-Full API documentation is not yet available. See below for a basic usage example.
+The documentation is hosted here: [Documentation](http://web2sharp.readthedocs.org/en/latest/)
+
+Direct link to the API reference: [API Reference](http://web2sharp.readthedocs.org/en/latest/api_reference)
 
 ## Basic usage
 
