@@ -17,32 +17,32 @@ namespace Web2Sharp.Tests.Http
 
         public string GetResponseFromUrl(string url)
         {
-            var fcgiParams = new Dictionary<string, string>
+            var fcgiParams = new Dictionary<string, byte[]>
             {
-                ["QUERY_STRING"] = "",
-                ["REQUEST_METHOD"] = "GET",
-                ["CONTENT_TYPE"] = "",
-                ["CONTENT_LENGTH"] = "",
-                ["SCRIPT_NAME"] = url,
-                ["REQUEST_URI"] = url,
-                ["DOCUMENT_URI"] = url,
-                ["SERVER_PROTOCOL"] = "HTTP/1.1",
-                ["REQUEST_SCHEME"] = "http",
-                ["GATEWAY_INTERFACE"] = "CGI/1.1",
-                ["SERVER_SOFTWARE"] = "nginx/1.9.2",
-                ["REMOTE_ADDR"] = "127.0.0.1",
-                ["REMOTE_PORT"] = "11192",
-                ["SERVER_ADDR"] = "127.0.0.1",
-                ["SERVER_PORT"] = "12121",
-                ["SERVER_NAME"] = "localhost",
-                ["HTTP_HOST"] = "localhost:12121",
-                ["HTTP_CONNECTION"] = "keep-alive",
-                ["HTTP_CACHE_CONTROL"] = "max-age=0",
-                ["HTTP_ACCEPT"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                ["HTTP_UPGRADE_INSECURE_REQUESTS"] = "1",
-                ["HTTP_USER_AGENT"] = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.78 Safari/537.36",
-                ["HTTP_ACCEPT_ENCODING"] = "gzip, deflate, sdch",
-                ["HTTP_ACCEPT_LANGUAGE"] = "de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4",
+                {"QUERY_STRING", Encoding.ASCII.GetBytes("")},
+                {"REQUEST_METHOD", Encoding.ASCII.GetBytes("GET")},
+                {"CONTENT_TYPE", Encoding.ASCII.GetBytes("")},
+                {"CONTENT_LENGTH", Encoding.ASCII.GetBytes("")},
+                {"SCRIPT_NAME", Encoding.ASCII.GetBytes(url)},
+                {"REQUEST_URI", Encoding.ASCII.GetBytes(url)},
+                {"DOCUMENT_URI", Encoding.ASCII.GetBytes(url)},
+                {"SERVER_PROTOCOL", Encoding.ASCII.GetBytes("HTTP/1.1")},
+                {"REQUEST_SCHEME", Encoding.ASCII.GetBytes("http")},
+                {"GATEWAY_INTERFACE", Encoding.ASCII.GetBytes("CGI/1.1")},
+                {"SERVER_SOFTWARE", Encoding.ASCII.GetBytes("nginx/1.9.2")},
+                {"REMOTE_ADDR", Encoding.ASCII.GetBytes("127.0.0.1")},
+                {"REMOTE_PORT", Encoding.ASCII.GetBytes("11192")},
+                {"SERVER_ADDR", Encoding.ASCII.GetBytes("127.0.0.1")},
+                {"SERVER_PORT", Encoding.ASCII.GetBytes("12121")},
+                {"SERVER_NAME", Encoding.ASCII.GetBytes("localhost")},
+                {"HTTP_HOST", Encoding.ASCII.GetBytes("localhost:12121")},
+                {"HTTP_CONNECTION", Encoding.ASCII.GetBytes("keep-alive")},
+                {"HTTP_CACHE_CONTROL", Encoding.ASCII.GetBytes("max-age=0")},
+                {"HTTP_ACCEPT", Encoding.ASCII.GetBytes("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")},
+                {"HTTP_UPGRADE_INSECURE_REQUESTS", Encoding.ASCII.GetBytes("1")},
+                {"HTTP_USER_AGENT", Encoding.ASCII.GetBytes("Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.78 Safari/537.36")},
+                {"HTTP_ACCEPT_ENCODING", Encoding.ASCII.GetBytes("gzip, deflate, sdch")},
+                {"HTTP_ACCEPT_LANGUAGE", Encoding.ASCII.GetBytes("de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4")},
             };
 
             var fcgiRequest = new FastCGI.Request(0, null);
@@ -65,11 +65,11 @@ namespace Web2Sharp.Tests.Http
         {
             var urlsByPatterns = new Dictionary<string, string>
             {
-                [@"^$"] = "",
-                [@"^/a$"] = "/a",
-                [@"^/b/\w+$"] = "/b/abc",
-                [@"^/c/\w+/world$"] = "/c/hello/world",
-                [@"^/c/\w+/world/$"] = "/c/hello/world/",
+                {@"^$", ""},
+                {@"^/a$", "/a"},
+                {@"^/b/\w+$", "/b/abc"},
+                {@"^/c/\w+/world$", "/c/hello/world"},
+                {@"^/c/\w+/world/$", "/c/hello/world/"},
             };
 
             foreach(var kvp in urlsByPatterns)

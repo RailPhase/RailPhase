@@ -16,9 +16,9 @@ namespace Web2Sharp.Tests.Utils
         {
             var strippedTextByInput = new Dictionary<string, string>
             {
-                [@"<h1>Lorem Ipsum</h1>"] = "Lorem Ipsum",
-                [@"<h1 style='color: red;'>Lorem <span color='blue'>Ipsum</span></h1>"] = "Lorem Ipsum",
-                [@""] = "",
+                {@"<h1>Lorem Ipsum</h1>", "Lorem Ipsum"},
+                {@"<h1 style='color: red;'>Lorem <span color='blue'>Ipsum</span></h1>", "Lorem Ipsum"},
+                {@"", ""},
             };
 
             foreach (var kvp in strippedTextByInput)

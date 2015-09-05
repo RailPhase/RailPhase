@@ -30,7 +30,7 @@ namespace Web2Sharp
         public HttpRequest(FastCGI.Request fcgiRequest)
         {
             FcgiRequest = fcgiRequest;
-            string httpMethod = fcgiRequest.Parameters["REQUEST_METHOD"];
+            string httpMethod = fcgiRequest.GetParameterASCII("REQUEST_METHOD");
             switch(httpMethod)
             {
                 case "GET":
@@ -52,7 +52,7 @@ namespace Web2Sharp
 
             GET = new Dictionary<string, string>();
             // Todo: perform correct parsing and decoding according to HTTP standard
-            var getParams = ServerParameters["QUERY_STRING"].Split('&');
+            var getParams = Encoding.ASCII.GetString(ServerParameters["QUERY_STRING"]).Split('&');
             foreach(var param in getParams)
             {
                 if (param.Length > 0)
@@ -78,7 +78,17 @@ namespace Web2Sharp
         /// <summary>
         /// A dictionary of all HTTP parameters included in the request
         /// </summary>
-        public IDictionary<string,string> ServerParameters { get { return FcgiRequest.Parameters; } }
+        public IDictionary<string,byte[]> ServerParameters { get { return FcgiRequest.Parameters; } }
+
+        public string GetParameterASCII(string name)
+        {
+            return Encoding.ASCII.GetString(ServerParameters[name]);
+        }
+
+        public string GetParameterUTF8(string name)
+        {
+            return Encoding.UTF8.GetString(ServerParameters[name]);
+        }
 
         /// <summary>
         /// A dictionary of all GET parameters included in the request.
@@ -92,7 +102,7 @@ namespace Web2Sharp
         {
             get
             {
-                return ServerParameters["REQUEST_URI"];
+                return GetParameterASCII("REQUEST_URI");
             }
         }
 

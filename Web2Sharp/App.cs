@@ -91,7 +91,7 @@ namespace Web2Sharp
         {
             foreach(var urlPattern in urlPatterns)
             {
-                string path = request.ServerParameters["DOCUMENT_URI"];
+                string path = request.GetParameterASCII("DOCUMENT_URI");
                 if (urlPattern.Pattern.IsMatch(path))
                     // Todo: Catch errors
                     return urlPattern.View(request);

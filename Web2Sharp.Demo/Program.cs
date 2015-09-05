@@ -52,7 +52,7 @@ namespace Web2Sharp.Demo
             body += "<table><tr><th>Name</th><th>Value</th>\n";
             foreach (var param in request.ServerParameters)
             {
-                body += string.Format("<tr><td>{0}</td><td>{1}</td></tr>\n", param.Key, param.Value);
+                body += string.Format("<tr><td>{0}</td><td>{1}</td></tr>\n", param.Key, request.GetParameterASCII(param.Key));
             }
             body += "</table>\n";
             body += "</body></html>\n";
