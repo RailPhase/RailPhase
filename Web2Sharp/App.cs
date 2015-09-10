@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
@@ -77,6 +78,25 @@ namespace Web2Sharp
         {
             TemplateRenderer template = Template.FromFile(templateFile);
             AddUrlPattern(pattern, template, contentType);
+        }
+
+        public void AddUrl(string url, View view)
+        {
+            AddUrlPattern("^" + Regex.Escape(url) + "$", view);
+        }
+
+        public void AddUrl(string url, TemplateRenderer template, string contentType = "text/html")
+        {
+            AddUrl(url, (request) =>
+            {
+                return new HttpResponse(template(null), contentType: contentType);
+            });
+        }
+
+        public void AddUrl(string url, string templateFile, string contentType = "text/html")
+        {
+            TemplateRenderer template = Template.FromFile(templateFile);
+            AddUrl(url, template, contentType);
         }
 
         public View NotFoundView = (request) =>
