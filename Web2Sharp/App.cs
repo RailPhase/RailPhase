@@ -79,6 +79,11 @@ namespace Web2Sharp
             AddUrlPattern(pattern, template, contentType);
         }
 
+        public View NotFoundView = (request) =>
+        {
+            return new HttpResponse("<h1>404 Not Found</h1>", contentType: "text/html", status: "404 NOT FOUND");
+        };
+
         /// <summary>
         /// Registers an URL pattern with a view that serves the local static files in the given directory.
         /// </summary>
@@ -115,8 +120,7 @@ namespace Web2Sharp
                     return urlPattern.View(request);
             }
 
-            // Todo: Return error
-            return new HttpResponse("<h1>Page not found</h1>", status:"404 NOT FOUND");
+            return NotFoundView(request);
         }
 
         /// <summary>
