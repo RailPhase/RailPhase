@@ -29,6 +29,7 @@ namespace Web2Sharp
     public class App
     {
         List<UrlPattern> urlPatterns = new List<UrlPattern>();
+        List<Module> activeModules = new List<Module>();
 
         /// <summary>
         /// Adds a new URL pattern.
@@ -119,6 +120,16 @@ namespace Web2Sharp
             var urlPattern = "^" + Regex.Escape(url) + ".*$";
 
             AddUrlPattern(urlPattern, view);
+		}
+		
+        public void AddModule(Module module)
+        {
+            foreach(var urlPattern in module.UrlPatterns)
+            {
+                AddUrlPattern(urlPattern);
+            }
+
+            activeModules.Add(module);
         }
 
         /// <summary>
