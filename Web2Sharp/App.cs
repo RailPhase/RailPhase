@@ -80,6 +80,23 @@ namespace Web2Sharp
         }
 
         /// <summary>
+        /// Registers an URL pattern with a view that serves the local static files in the given directory.
+        /// </summary>
+        /// <param name="url">The root url prefix to serve the files on. Must end with a slash.</param>
+        /// <param name="rootDirectory">The root directory where the served files are located. Must end with a slash.</param>
+        public void AddStaticDirectory(string rootDirectory, string url = "/static/")
+        {
+            View view = (HttpRequest request) =>
+            {
+                return ServeStatic.ServeStaticFiles(request, url, rootDirectory);
+            };
+
+            var urlPattern = "^" + Regex.Escape(url) + ".*$";
+
+            AddUrlPattern(urlPattern, view);
+        }
+
+        /// <summary>
         /// Handles an incoming HTTP request. You usually do not need to call this.
         /// </summary>
         /// <remarks>
