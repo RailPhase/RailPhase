@@ -133,16 +133,16 @@ namespace Web2Sharp
         /// <summary>
         /// Creates a new raw http response, without any headers pre-set.
         /// </summary>
-        /// <param name="body">(Optional) The raw HTTP body, including any headers. You can omit this parameter and set the <see cref="Body"/> later.</param>
-        public RawHttpResponse(string body="")
+        /// <param name="body">(Optional) The raw HTTP body, including any headers. You can omit this parameter and set the <see cref="RawBody"/> later.</param>
+        public RawHttpResponse(byte[] body = null)
         {
-            Body = body;
+            RawBody = body;
         }
 
         /// <summary>
-        /// The raw body of the HTTP response, including all headers.
+        /// The raw body of the HTTP response, including all headers. Can be null.
         /// </summary>
-        public string Body;
+        public byte[] RawBody;
     }
 
     /// <summary>
@@ -154,22 +154,25 @@ namespace Web2Sharp
     public class HttpResponse: RawHttpResponse
     {
         /// <summary>
-        /// Creates a HTTP response, with the most important headers already set.
+        /// Creates a HTTP response, encoded with UTF-8, with the most important headers already set.
         /// </summary>
         /// <remarks>
         /// If you need full control over the raw response content, use <see cref="RawHttpResponse"/> instead.
         /// </remarks>
         /// <param name="body">The content of the response, not including any headers.</param>
         /// <param name="status">(Optional) The HTTP status code. Default is "200 OK".</param>
-        /// <param name="contentType">(Optional) The HTTP content-type. Default is "text/html".</param>
+        /// <param name="contentType">(Optional) The HTTP content-type. Default is "text/html". Additionally, "charset=utf-8" will be appended to the HTTP content-type header.</param>
         /// <param name="additionalHeaders">(Optional) Any additional headers, in raw HTTP format. These must NOT end with a newline.</param>
         public HttpResponse(string body, string status="200 OK", string contentType="text/html", string additionalHeaders="")
         {
-            Body = "Status: "+status+"\n";
-            Body += "Content-Type: "+contentType+"\n";
-            Body += additionalHeaders+"\n";
-            Body += "\n";
-            Body += body;
+            var responseText = new StringBuilder();
+            responseText.AppendLine("Status: " + status);
+            responseText.AppendLine("Content-Type: " + contentType + "; charset=utf-8");
+            responseText.AppendLine(additionalHeaders);
+            responseText.AppendLine("");
+            responseText.Append(body);
+
+            RawBody = Encoding.UTF8.GetBytes(responseText.ToString());
         }
     }
 

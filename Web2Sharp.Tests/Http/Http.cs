@@ -50,7 +50,12 @@ namespace Web2Sharp.Tests.Http
             var request = new HttpRequest(fcgiRequest);
             var response = app.HandleRequest(request);
 
-            return response.Body;
+            return Encoding.UTF8.GetString(response.RawBody);
+        }
+
+        public RawHttpResponse MakeRawResponse(string utf8Input)
+        {
+            return new RawHttpResponse(Encoding.UTF8.GetBytes(utf8Input));
         }
 
         [SetUp]
@@ -78,7 +83,7 @@ namespace Web2Sharp.Tests.Http
                 var url = kvp.Value;
 
                 var expectedResponse = rand.Next().ToString();
-                app.AddUrlPattern(pattern, request => new RawHttpResponse(expectedResponse));
+                app.AddUrlPattern(pattern, request => MakeRawResponse(expectedResponse));
 
                 var response = GetResponseFromUrl(url);
 

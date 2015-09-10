@@ -109,7 +109,8 @@ namespace Web2Sharp
         {
             var httpRequest = new HttpRequest(fcgiRequest);
             var response = HandleRequest(httpRequest);
-            fcgiRequest.WriteResponseUtf8(response.Body);
+            if(response.RawBody != null)
+                fcgiRequest.WriteResponse(response.RawBody);
             fcgiRequest.Close();
         }
 
