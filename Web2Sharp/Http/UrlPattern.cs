@@ -43,4 +43,15 @@ namespace Web2Sharp
         /// </summary>
         public readonly View View;
     }
+
+    public class UrlPatternMatch
+    {
+        public UrlPattern Pattern;
+        public Match Match;
+
+        public string this[string groupName]
+        {
+            get { return Match.Groups[groupName].Value; }
+        }
+    }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Web2Sharp
@@ -75,6 +76,8 @@ namespace Web2Sharp
         /// The underlying FastCGI request. Contains some more detailed information.
         /// </summary>
         public readonly FastCGI.Request FcgiRequest;
+
+        public UrlPatternMatch PatternMatch;
 
         /// <summary>
         /// A dictionary of all HTTP parameters included in the request

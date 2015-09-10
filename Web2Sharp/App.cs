@@ -136,8 +136,16 @@ namespace Web2Sharp
             {
                 string path = request.GetParameterASCII("DOCUMENT_URI");
                 if (urlPattern.Pattern.IsMatch(path))
+                {
+                    request.PatternMatch = new UrlPatternMatch
+                    {
+                        Pattern = urlPattern,
+                        Match = urlPattern.Pattern.Match(path)
+                    };
+
                     // Todo: Catch errors
                     return urlPattern.View(request);
+                }
             }
 
             return NotFoundView(request);
