@@ -1,12 +1,12 @@
-# Web2Sharp
+# RailPhase
 
-[![Build Status](https://travis-ci.org/LukasBoersma/Web2Sharp.svg?branch=master)](https://travis-ci.org/LukasBoersma/Web2Sharp)
+[![Build Status](https://travis-ci.org/LukasBoersma/RailPhase.svg?branch=master)](https://travis-ci.org/LukasBoersma/RailPhase)
 
 This library allows you to write web applications in .NET via FastCGI. The API is inspired by [Django](https://www.djangoproject.com/). Right now, this library has far less features, though.
 
 See below for a simple usage example.
 
-Web2Sharp uses [FastCGI for .NET](https://github.com/LukasBoersma/FastCGI) for the FastCGI protocol and adds a lightweight layer of convenience functions. Web2Sharp is based on .NET 4.5.
+RailPhase uses [FastCGI for .NET](https://github.com/LukasBoersma/FastCGI) for the FastCGI protocol and adds a lightweight layer of convenience functions. RailPhase is based on .NET 4.5.
 
 ## License and contributing
 
@@ -18,17 +18,17 @@ If you think you found a bug, you can open an Issue on Github. If you make chang
 
 ## Documentation
 
-The documentation is hosted here: [Documentation](http://web2sharp.readthedocs.org/en/latest/)
+The documentation is hosted here: [Documentation](http://RailPhase.readthedocs.org/en/latest/)
 
-Direct link to the API reference: [API Reference](http://web2sharp.readthedocs.org/en/latest/api_reference)
+Direct link to the API reference: [API Reference](http://RailPhase.readthedocs.org/en/latest/api_reference)
 
 ## Basic usage
 
 Use this library together with a web server like Apache and nginx. The web server will serve static content and forward HTTP requests for dynamic content to your application.
 
-Web2Sharp starts listening for requests and forwards them to your *views*. A view accepts a HttpRequest and returns a HttpResponse. Regular expressions are used to determine which URL pattern should be mapped to which view.
+RailPhase starts listening for requests and forwards them to your *views*. A view accepts a HttpRequest and returns a HttpResponse. Regular expressions are used to determine which URL pattern should be mapped to which view.
 
-Before using, make sure that you understand the concept of [FastCGI](https://en.wikipedia.org/wiki/FastCGI). Your Web2Sharp app will *not* accept HTTP connections. You need a web server to access your content.
+Before using, make sure that you understand the concept of [FastCGI](https://en.wikipedia.org/wiki/FastCGI). Your RailPhase app will *not* accept HTTP connections. You need a web server to access your content.
 
 This example sets up a simple web application:
 
@@ -48,7 +48,7 @@ This example sets up a simple web application:
 Where *InfoView* could be something like:
 
 ```csharp
-    static HttpResponse InfoView(Web2Sharp.HttpRequest request)
+    static HttpResponse InfoView(RailPhase.HttpRequest request)
     {
         // This is of course not the recommended way to generate HTML content,
         // but it is the simplest way for this example.
@@ -91,7 +91,7 @@ If you run this program and set up your web server properly (see below), you sho
 
 ## Web server configuration
 
-Web2Sharp relies on getting certain FastCGI parameters from the web server.
+RailPhase relies on getting certain FastCGI parameters from the web server.
 
 Refer to your web server documentation for configuration details:
 

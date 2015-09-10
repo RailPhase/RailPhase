@@ -1,10 +1,10 @@
 language: csharp
-solution: Web2Sharp.sln
+solution: RailPhase.sln
 install:
-  - nuget restore Web2Sharp.sln
+  - nuget restore RailPhase.sln
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
-  - xbuild /p:Configuration=Release /p:TargetFrameworkVersion="v4.5" /p:ToolsVersion="4.0" Web2Sharp.sln
-  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Web2Sharp.Tests/bin/Release/Web2Sharp.Tests.dll
+  - xbuild /p:Configuration=Release /p:TargetFrameworkVersion="v4.5" /p:ToolsVersion="4.0" RailPhase.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./RailPhase.Tests/bin/Release/RailPhase.Tests.dll
 after_success:
   - bash <(curl -s https://codecov.io/bash)

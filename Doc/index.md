@@ -1,10 +1,10 @@
-# Web2Sharp
+# RailPhase
 
 This library allows you to write web applications in .NET via FastCGI. The API is inspired by [Django](https://www.djangoproject.com/). Right now, this library has far less features, though.
 
-Web2Sharp uses [FastCGI for .NET](https://github.com/LukasBoersma/FastCGI) for the FastCGI protocol and adds a lightweight layer of convenience functions. Web2Sharp is based on .NET 4.5.
+RailPhase uses [FastCGI for .NET](https://github.com/LukasBoersma/FastCGI) for the FastCGI protocol and adds a lightweight layer of convenience functions. RailPhase is based on .NET 4.5.
 
-This project is hosted on [Github](https://github.com/LukasBoersma/Web2Sharp). Sources are available under the MIT license.
+This project is hosted on [Github](https://github.com/LukasBoersma/RailPhase). Sources are available under the MIT license.
 
 ## API Reference
 
@@ -14,9 +14,9 @@ Find the API reference here: [API Reference](api_reference.md)
 
 Use this library together with a web server like Apache and nginx. The web server will serve static content and forward HTTP requests for dynamic content to your application.
 
-Web2Sharp starts listening for requests and forwards them to your *views*. A view accepts a HttpRequest and returns a HttpResponse. Regular expressions are used to determine which URL pattern should be mapped to which view.
+RailPhase starts listening for requests and forwards them to your *views*. A view accepts a HttpRequest and returns a HttpResponse. Regular expressions are used to determine which URL pattern should be mapped to which view.
 
-Before using, make sure that you understand the concept of [FastCGI](https://en.wikipedia.org/wiki/FastCGI). Your Web2Sharp app will *not* accept HTTP connections. You need a web server to access your content.
+Before using, make sure that you understand the concept of [FastCGI](https://en.wikipedia.org/wiki/FastCGI). Your RailPhase app will *not* accept HTTP connections. You need a web server to access your content.
 
 This example sets up a simple web application:
 
@@ -36,7 +36,7 @@ This example sets up a simple web application:
 Where *InfoView* could be something like:
 
 ```csharp
-    static HttpResponse InfoView(Web2Sharp.HttpRequest request)
+    static HttpResponse InfoView(RailPhase.HttpRequest request)
     {
         // This is of course not the recommended way to generate HTML content,
         // but it is the simplest way for this example.
@@ -79,7 +79,7 @@ If you run this program and set up your web server properly (see below), you sho
 
 ## Web server configuration
 
-Web2Sharp relies on getting certain FastCGI parameters from the web server.
+RailPhase relies on getting certain FastCGI parameters from the web server.
 
 Refer to your web server documentation for configuration details:
 

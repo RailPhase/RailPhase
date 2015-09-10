@@ -1,0 +1,7 @@
+﻿{% context RailPhase.Tests.TestContext,RailPhase.Tests %}
+{% using System.Text %}
+SomeString: {{ SomeString }}, SomeInteger: {{ SomeInteger }}
+{% if FlagProperty %}
+{% for value in SomeList %}{{value}}{% endfor %}
+{% endif %}
+{% if FlagFalse %} Don't include this {% endif %}

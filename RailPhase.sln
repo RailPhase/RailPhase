@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RailPhase", "RailPhase\RailPhase.csproj", "{0E486BC0-0E47-4D37-94D1-CE73BCDCDB63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RailPhase.Demo", "RailPhase.Demo\RailPhase.Demo.csproj", "{39527D95-316E-4363-AB0D-29347D628861}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RailPhase.Tests", "RailPhase.Tests\RailPhase.Tests.csproj", "{D541A597-7C02-4506-AF5C-6D887FA51D9D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E486BC0-0E47-4D37-94D1-CE73BCDCDB63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E486BC0-0E47-4D37-94D1-CE73BCDCDB63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E486BC0-0E47-4D37-94D1-CE73BCDCDB63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E486BC0-0E47-4D37-94D1-CE73BCDCDB63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39527D95-316E-4363-AB0D-29347D628861}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39527D95-316E-4363-AB0D-29347D628861}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39527D95-316E-4363-AB0D-29347D628861}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39527D95-316E-4363-AB0D-29347D628861}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D541A597-7C02-4506-AF5C-6D887FA51D9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D541A597-7C02-4506-AF5C-6D887FA51D9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D541A597-7C02-4506-AF5C-6D887FA51D9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D541A597-7C02-4506-AF5C-6D887FA51D9D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

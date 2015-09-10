@@ -1,4 +1,4 @@
-site_name: Web2Sharp
+site_name: RailPhase
 theme: readthedocs
 docs_dir: 'Doc/'
 pages:
