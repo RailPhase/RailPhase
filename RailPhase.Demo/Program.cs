@@ -19,7 +19,7 @@ namespace RailPhase.Demo
             app.AddUrlPattern("^/$", (request) => new HttpResponse("<h1>Hello World</h1>"));
             app.AddUrlPattern("^/info$", InfoView);
 
-            app.RunHttpServer();
+            app.RunTestServer();
         }
 
         /// <summary>
