@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -77,6 +79,13 @@ namespace RailPhase
         /// </summary>
         public readonly FastCGI.Request FcgiRequest;
 
+        /// <summary>
+        /// Contains information about the URL pattern that was matched to this request.
+        /// </summary>
+        /// <remarks>
+        /// If the URL pattern contained regex groups, you can use this like a dictionary to access the matched URL substrings.
+        /// See <see cref="UrlPatternMatch"/> for details.
+        /// </remarks>
         public UrlPatternMatch PatternMatch;
 
         /// <summary>
@@ -125,6 +134,25 @@ namespace RailPhase
         /// The HTTP method of the request.
         /// </summary>
         public HttpMethod Method { get; private set; }
+
+        static int FakeRequestId = 128000;
+        /// <summary>
+        /// Creates an HttpRequest from the given System.Net.HttpListenerContext.
+        /// </summary>
+        /// <remarks>
+        /// Used internally by <see cref="App.RunTestServer(string)"/>.
+        /// </remarks>
+        public static HttpRequest FromHttpListenerContext(HttpListenerContext context)
+        {
+            var fakeRequest = new FastCGI.Request(FakeRequestId++, new MemoryStream());
+
+            fakeRequest.Parameters.Add("REQUEST_METHOD", Encoding.ASCII.GetBytes(context.Request.HttpMethod));
+            fakeRequest.Parameters.Add("QUERY_STRING", Encoding.ASCII.GetBytes(context.Request.RawUrl));
+            fakeRequest.Parameters.Add("DOCUMENT_URI", Encoding.ASCII.GetBytes(context.Request.RawUrl));
+            fakeRequest.Parameters.Add("REQUEST_URI", Encoding.ASCII.GetBytes(context.Request.RawUrl));
+
+            return new HttpRequest(fakeRequest);
+        }
     }
 
     /// <summary>
@@ -146,6 +174,52 @@ namespace RailPhase
         /// The raw body of the HTTP response, including all headers. Can be null.
         /// </summary>
         public byte[] RawBody;
+
+        /// <summary>
+        /// Writes this response to the output stream of the given System.Net.HttpListenerContext
+        /// </summary>
+        /// <remarks>
+        /// Used internally by <see cref="App.RunTestServer(string)"/>.
+        /// </remarks>
+        public void WriteToHttpListenerContext(HttpListenerContext context)
+        {
+            var responseStream = new MemoryStream(RawBody);
+
+            // Read the HTTP headers from the raw body
+            bool bodyReached = false;
+            while (!bodyReached)
+            {
+                var line = new StringBuilder();
+                var lineEndReached = false;
+                while (!lineEndReached)
+                {
+                    var b = responseStream.ReadByte();
+                    if (b < 0)
+                    {
+                        bodyReached = true;
+                        break;
+                    }
+                    else if ((char)b == '\n')
+                        lineEndReached = true;
+                    else
+                        line.Append((char)b);
+                }
+
+                // Stop if we reached an empty line; this marks the start of the body
+                if (String.IsNullOrWhiteSpace(line.ToString()))
+                    bodyReached = true;
+                else
+                {
+                    // Add each header to the listenercontext response
+                    var headerElements = line.ToString().Split(new char[] { ':' }, 2);
+                    context.Response.AddHeader(headerElements[0].Trim(), headerElements[1].Trim());
+                }
+            }
+
+            // And finally, write the body to the output stream.
+            context.Response.OutputStream.Write(RawBody, (int)responseStream.Position, RawBody.Length - (int)responseStream.Position);
+            context.Response.OutputStream.Close();
+        }
     }
 
     /// <summary>

@@ -44,11 +44,38 @@ namespace RailPhase
         public readonly View View;
     }
 
+    /// <summary>
+    /// Contains information about how a request was matched to a URL pattern.
+    /// </summary>
+    /// <remarks>
+    /// If the URL pattern contained named regex groups, you can use this like a dictionary to access the matched URL substrings.
+    /// </remarks>
+    /// <example>
+    /// app.AddUrlPattern(@"^/article/(?<articleSlug>[\w\-]+)$", ArticleView);
+    /// 
+    /// [...]
+    /// 
+    /// public HttpResponse ArticleView
+    /// {
+    ///     // Get the article slug from the pattern match
+    ///     var articleSlug = request.PatternMatch["articleSlug"];
+    /// }
+    /// </example>
     public class UrlPatternMatch
     {
+        /// <summary>
+        /// The <see cref="UrlPattern"/> that matched the request.
+        /// </summary>
         public UrlPattern Pattern;
+
+        /// <summary>
+        /// The Regex Match object, containing information about how the request URI matched the URL pattern.
+        /// </summary>
         public Match Match;
 
+        /// <summary>
+        /// Convenience access to the named regex groups.
+        /// </summary>
         public string this[string groupName]
         {
             get { return Match.Groups[groupName].Value; }

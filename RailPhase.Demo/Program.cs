@@ -19,9 +19,7 @@ namespace RailPhase.Demo
             app.AddUrlPattern("^/$", (request) => new HttpResponse("<h1>Hello World</h1>"));
             app.AddUrlPattern("^/info$", InfoView);
 
-            // Start accepting requests from the web server on port 19000.
-            // This method never returns!
-            app.Run(19000);
+            app.RunHttpServer();
         }
 
         /// <summary>

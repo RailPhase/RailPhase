@@ -47,7 +47,7 @@ namespace RailPhase
         /// Adds a new URL pattern.
         /// </summary>
         /// <remarks>
-        /// When the App receives a request with a URL that matches the given pattern, the specified view will be called.
+        /// When the App receives a request with a URL that matches the given regex pattern, the specified view will be called.
         /// </remarks>
         /// <param name="pattern">A string in .NET Regex Syntax, specifying the URL pattern.</param>
         /// <param name="view">The View that should be called when </param>
@@ -56,7 +56,7 @@ namespace RailPhase
         public void AddUrlPattern(string pattern, View view) { urlPatterns.Add(new UrlPattern(pattern, view)); }
 
         /// <summary>
-        /// Adds a new URL pattern that responds to requests with a template.
+        /// Adds a new URL pattern with a regex pattern that responds to requests with a template.
         /// </summary>
         /// <param name="pattern">A string in .NET Regex Syntax, specifying the URL pattern.</param>
         /// <param name="template">The TemplateRenderer that is used to render the response.</param>
@@ -70,7 +70,7 @@ namespace RailPhase
         }
 
         /// <summary>
-        /// Adds a new URL pattern that responds to requests with a template.
+        /// Adds a new URL pattern with a regex pattern that responds to requests with a template.
         /// </summary>
         /// <param name="pattern">A string in .NET Regex Syntax, specifying the URL pattern.</param>
         /// <param name="template">The path to the template file that is used to render the response.</param>
@@ -81,11 +81,17 @@ namespace RailPhase
             AddUrlPattern(pattern, template, contentType);
         }
 
+        /// <summary>
+        /// Adds a new URL pattern with a static URL.
+        /// </summary>
         public void AddUrl(string url, View view)
         {
             AddUrlPattern("^" + Regex.Escape(url) + "$", view);
         }
 
+        /// <summary>
+        /// Adds a new URL pattern with a static URL. The URL pattern responds to request with the given template.
+        /// </summary>
         public void AddUrl(string url, TemplateRenderer template, string contentType = "text/html")
         {
             AddUrl(url, (request) =>
@@ -94,12 +100,18 @@ namespace RailPhase
             });
         }
 
+        /// <summary>
+        /// Adds a new URL pattern with a static URL. The URL pattern responds to request with a the given template.
+        /// </summary>
         public void AddUrl(string url, string templateFile, string contentType = "text/html")
         {
             TemplateRenderer template = Template.FromFile(templateFile);
             AddUrl(url, template, contentType);
         }
 
+        /// <summary>
+        /// The view that should be called when a request does not match any of the URL patterns.
+        /// </summary>
         public View NotFoundView = (request) =>
         {
             return new HttpResponse("<h1>404 Not Found</h1>", contentType: "text/html", status: "404 NOT FOUND");
@@ -122,6 +134,9 @@ namespace RailPhase
             AddUrlPattern(urlPattern, view);
 		}
 		
+        /// <summary>
+        /// Registers the URL patterns of the given Module in this app.
+        /// </summary>
         public void AddModule(Module module)
         {
             foreach(var urlPattern in module.UrlPatterns)
@@ -177,13 +192,41 @@ namespace RailPhase
         /// <summary>
         /// Starts listening as a FastCGI client. This method never returns! 
         /// </summary>
-        /// <remarks>This method starts the FastCGI client and will respond to any requests that are received over FastCGI. Any URL patterns have to be registered before calling this, because this method never returns.</remarks>
-        /// <param name="port">The port for the FastCGI client.</param>
-        public void Run(int port=19000)
+        /// <remarks>
+        /// This method starts the FastCGI client and will respond to any requests that are received over FastCGI.
+        /// If you want to host a HTTP server for testing, you can use <see cref="RunTestServer(string)"/> instead, although
+        /// this is not recommended for production use.
+        /// Any URL patterns and other configuration have to be set before calling this, because this method never returns.
+        /// </remarks>
+        public void RunFcgiClient(int port=19000)
         {
             var fcgiApp = new FastCGI.FCGIApplication();
             fcgiApp.OnRequestReceived += ReceiveFcgiRequest;
             fcgiApp.Run(port);
+        }
+
+
+        /// <summary>
+        /// Starts a simple HTTP server for testing purposes. This method never returns!
+        /// </summary>
+        /// <remarks>
+        /// The web server will accept HTTP requests from the given prefix (default is "http://localhost:8080").
+        /// Using this method is not recommended for production use. Instead, use a dedicated webserver like Apache or nginx,
+        /// and use <see cref="RunFcgiClient(int)"/> to accept FastCGI requests from the webserver.
+        /// Any URL patterns and other configuration have to be set before calling this, because this method never returns.
+        /// </remarks>
+        public void RunTestServer(string prefix = "http://localhost:8080/")
+        {
+            var listener = new HttpListener();
+            listener.Prefixes.Add(prefix);
+            listener.Start();
+            while(true)
+            {
+                var httpContext = listener.GetContext();
+                var httpRequest = HttpRequest.FromHttpListenerContext(httpContext);
+                var response = HandleRequest(httpRequest);
+                response.WriteToHttpListenerContext(httpContext);
+            }
         }
 
     }
