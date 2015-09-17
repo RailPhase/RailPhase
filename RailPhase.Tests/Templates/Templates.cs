@@ -1,11 +1,10 @@
 ﻿using System;
-using NUnit.Framework;
-
-
-using RailPhase;
-using RailPhase.Templates;
 using System.IO;
 using System.Collections.Generic;
+
+using NUnit.Framework;
+using RailPhase;
+
 
 namespace RailPhase.Tests
 {

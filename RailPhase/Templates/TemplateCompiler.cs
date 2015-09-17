@@ -7,7 +7,7 @@ using System.Reflection;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 
-namespace RailPhase.Templates
+namespace RailPhase
 {
     /// <summary>
     /// Represents a syntax error in a template.
@@ -111,7 +111,7 @@ namespace RailPhase.Templates
 
         internal static Type ParseTemplateString(string template, string name)
         {
-            var parser = Parser.Parser.FromText(template);
+            var parser = TemplateParser.Parser.FromText(template);
             var success = parser.Parse();
 
             if(!success)
@@ -147,7 +147,7 @@ namespace RailPhase.Templates
             s.AppendLine("using System;");
             s.AppendLine("using System.Text;");
             s.AppendLine("using System.Collections.Generic;");
-            s.AppendLine("using RailPhase.Templates;");
+            s.AppendLine("using RailPhase;");
 
             // Add custom usings from template
             foreach (var ns in parser.ResultUsings)

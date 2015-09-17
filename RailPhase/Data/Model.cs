@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using System.Data.Entity;
 
-namespace RailPhase.Data
+namespace RailPhase
 {
     public abstract class ModelBase {}
 

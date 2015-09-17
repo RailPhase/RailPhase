@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace RailPhase.Templates
+namespace RailPhase
 {
     /// <summary>
     /// Provides functions to work with templates.

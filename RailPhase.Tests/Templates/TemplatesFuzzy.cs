@@ -5,7 +5,6 @@ using System.Globalization;
 
 
 using RailPhase;
-using RailPhase.Templates;
 
 namespace RailPhase.Tests
 {

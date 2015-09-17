@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Reflection;
 
-namespace RailPhase.Data
+namespace RailPhase
 {
     public class DatabaseContext: DbContext
     {

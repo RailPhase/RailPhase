@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace RailPhase.Templates
+namespace RailPhase
 {
     /// <summary>
     /// A template renderer takes a context object and outputs a string.

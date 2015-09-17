@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using RailPhase.Templates;
-
 namespace RailPhase.Demo
 {
     class Program
@@ -28,7 +26,7 @@ namespace RailPhase.Demo
         static HttpResponse InfoView(RailPhase.HttpRequest request)
         {
             // Get the template for the info page.
-            var render = Templates.Template.FromFile("InfoTemplate.html");
+            var render = Template.FromFile("InfoTemplate.html");
 
             // Pass the HttpRequest as the template context, because we want
             // to display information about the request. Normally, we would

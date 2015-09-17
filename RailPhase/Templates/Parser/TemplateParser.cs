@@ -17,7 +17,7 @@ using System.Globalization;
 using System.Text;
 using QUT.Gppg;
 
-namespace RailPhase.Templates.Parser
+namespace RailPhase.TemplateParser
 {
 internal enum Tokens {error=2,EOF=3,TEXT=4,TAG_START_BLOCK=5,TAG_START_ENDBLOCK=6,
     TAG_START_IF=7,TAG_START_ENDIF=8,TAG_START_ELSE=9,TAG_START_FOR=10,TAG_START_ENDFOR=11,TAG_START_USING=12,

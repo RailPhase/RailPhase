@@ -8,8 +8,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 
-using RailPhase.Templates;
-using RailPhase.Data;
 
 namespace RailPhase
 {
