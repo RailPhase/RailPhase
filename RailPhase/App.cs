@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.IO;
 
 using RailPhase.Templates;
+using RailPhase.Data;
 
 namespace RailPhase
 {
@@ -31,6 +32,18 @@ namespace RailPhase
         List<UrlPattern> urlPatterns = new List<UrlPattern>();
         List<Module> activeModules = new List<Module>();
 
+        public DatabaseContext Db;
+
+        public void ConnectDatabase(string connectionName = "Database")
+        {
+            Db = new DatabaseContext(connectionName);
+        }
+
+        public void ConnectDatabase(DatabaseContext db)
+        {
+            Db = db;
+        }
+        
         /// <summary>
         /// Adds a new URL pattern.
         /// </summary>
