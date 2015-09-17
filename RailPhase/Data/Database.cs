@@ -14,11 +14,8 @@ namespace RailPhase.Data
         public DatabaseContext(string connectionName):
             base(connectionName)
         {
-            Users.Count();
         }
-
-        public DbSet<Auth.User> Users { get; set; }
-
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var entityMethod = typeof(DbModelBuilder).GetMethod("Entity");
