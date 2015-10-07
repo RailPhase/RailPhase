@@ -63,6 +63,8 @@
   <ItemGroup>
     <Compile Include="Data\Database.cs" />
     <Compile Include="Data\Model.cs" />
+    <Compile Include="Forms\Form.cs" />
+    <Compile Include="Forms\FormField.cs" />
     <Compile Include="Http\Http.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Http\ServeStatic.cs" />
