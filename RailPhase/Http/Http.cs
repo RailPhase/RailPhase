@@ -73,6 +73,25 @@ namespace RailPhase
                     }
                 }
             }
+
+            POST = new Dictionary<string, string>();
+            // Todo: perform correct parsing and decoding according to HTTP standard
+            var postParams = Body.Split('&');
+            foreach (var param in postParams)
+            {
+                if (param.Length > 0)
+                {
+                    var keyValue = param.Split(new char[] { '=' }, 2);
+                    if (keyValue.Length >= 1)
+                    {
+                        var key = keyValue[0];
+                        var value = "";
+                        if (keyValue.Length >= 2)
+                            value = keyValue[1];
+                        POST[key] = System.Uri.UnescapeDataString(value.Replace('+', ' '));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -107,7 +126,8 @@ namespace RailPhase
         /// <summary>
         /// A dictionary of all GET parameters included in the request.
         /// </summary>
-        public Dictionary<string,string> GET { get; private set; }
+        public Dictionary<string, string> GET { get; private set; }
+        public Dictionary<string, string> POST { get; private set; }
 
         /// <summary>
         /// The URI of this request
