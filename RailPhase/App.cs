@@ -30,18 +30,11 @@ namespace RailPhase
         List<UrlPattern> urlPatterns = new List<UrlPattern>();
         List<Module> activeModules = new List<Module>();
 
-        public DatabaseContext Db;
-
-        public void ConnectDatabase(string connectionName = "Database")
+        public void ConnectDatabase(string connection = "Database")
         {
-            Db = new DatabaseContext(connectionName);
+            Database.InitializeDatabase(connection);
         }
 
-        public void ConnectDatabase(DatabaseContext db)
-        {
-            Db = db;
-        }
-        
         /// <summary>
         /// Adds a new URL pattern.
         /// </summary>
