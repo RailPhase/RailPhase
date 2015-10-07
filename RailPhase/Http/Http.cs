@@ -337,6 +337,17 @@ namespace RailPhase
         }
     }
 
+    public class RedirectResponse: HttpResponse
+    {
+        public RedirectResponse(string location, bool permanentRedirect = false):
+            base(
+                "",
+                status: (permanentRedirect ? "301 Moved Permanently" : "307 Temporary Redirect"),
+                additionalHeaders: "Location:"+location
+            )
+        {}
+    }
+
     public class Cookie
     {
         public string Name;
