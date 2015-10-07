@@ -92,7 +92,8 @@
     <Compile Include="Templates\TemplateCompiler.cs" />
     <Compile Include="Templates\Template.cs" />
     <Compile Include="Templates\TemplateLoader.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="Utils\Paginate.cs" />
+    <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
