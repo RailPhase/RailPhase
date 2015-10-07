@@ -53,9 +53,9 @@ namespace RailPhase
 
             // If we found a content type for this file, add it to the HTTP response, otherwise omit it.
             if (contentType != null)
-                head = "Status: 200 OK\nContent-Type: " + contentType + "\n\n";
+                head = "HTTP/1.1 200 OK\nContent-Type: " + contentType + "\n\n";
             else
-                head = "Status: 200 OK\n\n";
+                head = "HTTP/1.1 200 OK\n\n";
 
             byte[] rawHead = Encoding.ASCII.GetBytes(head);
 

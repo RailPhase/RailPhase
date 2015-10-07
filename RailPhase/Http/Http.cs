@@ -184,9 +184,10 @@ namespace RailPhase
         public void WriteToHttpListenerContext(HttpListenerContext context)
         {
             var responseStream = new MemoryStream(RawBody);
-
+            
             // Read the HTTP headers from the raw body
             bool bodyReached = false;
+            bool firstLine = true;
             while (!bodyReached)
             {
                 var line = new StringBuilder();
@@ -201,6 +202,8 @@ namespace RailPhase
                     }
                     else if ((char)b == '\n')
                         lineEndReached = true;
+                    else if ((char)b == '\r')
+                        continue; // Ignore \r characters
                     else
                         line.Append((char)b);
                 }
@@ -210,9 +213,28 @@ namespace RailPhase
                     bodyReached = true;
                 else
                 {
-                    // Add each header to the listenercontext response
-                    var headerElements = line.ToString().Split(new char[] { ':' }, 2);
-                    context.Response.AddHeader(headerElements[0].Trim(), headerElements[1].Trim());
+                    // First line contains HTTP response status line
+                    if (firstLine)
+                    {
+                        var statusElements = line.ToString().Split(new char[] { ' ' }, 3);
+
+                        if (statusElements.Length != 3 || statusElements[0] != "HTTP/1.1")
+                            throw new InvalidDataException("Invalid HTTP Response: Incorrect status line found");
+
+                        var statusCode = statusElements[1];
+                        var statusDescription = statusElements[2];
+
+                        context.Response.StatusCode = Int32.Parse(statusCode);
+                        context.Response.StatusDescription = statusDescription;
+
+                        firstLine = false;
+                    }
+                    else
+                    {
+                        // Add each header to the listenercontext response
+                        var headerElements = line.ToString().Split(new char[] { ':' }, 2);
+                        context.Response.AddHeader(headerElements[0].Trim(), headerElements[1].Trim());
+                    }
                 }
             }
 
@@ -240,12 +262,18 @@ namespace RailPhase
         /// <param name="status">(Optional) The HTTP status code. Default is "200 OK".</param>
         /// <param name="contentType">(Optional) The HTTP content-type. Default is "text/html". Additionally, "charset=utf-8" will be appended to the HTTP content-type header.</param>
         /// <param name="additionalHeaders">(Optional) Any additional headers, in raw HTTP format. These must NOT end with a newline.</param>
-        public HttpResponse(string body, string status="200 OK", string contentType="text/html", string additionalHeaders="")
+        public HttpResponse(string body, string status="200 OK", string contentType="text/html", string additionalHeaders="", IEnumerable<Cookie> cookies = null)
         {
             var responseText = new StringBuilder();
-            responseText.AppendLine("Status: " + status);
+            responseText.AppendLine("HTTP/1.1 " + status);
             responseText.AppendLine("Content-Type: " + contentType + "; charset=utf-8");
             responseText.AppendLine(additionalHeaders);
+
+            // Write additional headers
+            if(!String.IsNullOrEmpty(additionalHeaders))
+                responseText.AppendLine(additionalHeaders);
+
+            // Empty line marks the start of the body
             responseText.AppendLine("");
             responseText.Append(body);
 

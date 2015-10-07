@@ -111,10 +111,10 @@ namespace RailPhase.Tests.Http
 
             string response = GetResponseFromUrl("/test-httpresponse");
 
+            Assert.True(response.StartsWith("HTTP/1.1 " + statusCode));
+            Assert.True(response.Contains("Content-Type: " + contentType));
             Assert.True(response.Contains(additionalHeaders));
             Assert.True(response.EndsWith(responseText));
-            Assert.True(response.Contains("Status: " + statusCode));
-            Assert.True(response.Contains("Content-Type: " + contentType));
         }
     }
 }
