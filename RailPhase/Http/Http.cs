@@ -92,6 +92,18 @@ namespace RailPhase
                     }
                 }
             }
+
+            if (ServerParameters.ContainsKey("HTTP_COOKIE"))
+            {
+                var cookieHeader = GetParameterASCII("HTTP_COOKIE");
+                var cookies = cookieHeader.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach(var cookie in cookies)
+                {
+                    var cookieNameValue = cookie.Split('=');
+                    Cookies[cookieNameValue[0].Trim()] = System.Uri.UnescapeDataString(cookieNameValue[1].Trim().Replace('+', ' '));
+                }
+            }
+            
         }
 
         /// <summary>
@@ -128,6 +140,8 @@ namespace RailPhase
         /// </summary>
         public Dictionary<string, string> GET { get; private set; }
         public Dictionary<string, string> POST { get; private set; }
+
+        public Dictionary<string, string> Cookies = new Dictionary<string, string>();
 
         /// <summary>
         /// The URI of this request
@@ -288,7 +302,28 @@ namespace RailPhase
             var responseText = new StringBuilder();
             responseText.AppendLine("HTTP/1.1 " + status);
             responseText.AppendLine("Content-Type: " + contentType + "; charset=utf-8");
-            responseText.AppendLine(additionalHeaders);
+
+            // Write the cookie headers
+            if(cookies != null)
+            {
+                foreach(var cookie in cookies)
+                {
+                    responseText.Append("Set-Cookie: " + cookie.Name + "=" + cookie.Value);
+                    if (cookie.Expires != null)
+                    {
+                        responseText.Append(";Expires=" + cookie.Expires.ToRFC822String());
+                    }
+                    if (cookie.Domain != null)
+                    {
+                        responseText.Append(";Domain=" + cookie.Domain);
+                    }
+                    if (cookie.Path != null)
+                    {
+                        responseText.Append(";Path=" + cookie.Path);
+                    }
+                    responseText.AppendLine();
+                }
+            }
 
             // Write additional headers
             if(!String.IsNullOrEmpty(additionalHeaders))
@@ -300,6 +335,15 @@ namespace RailPhase
 
             RawBody = Encoding.UTF8.GetBytes(responseText.ToString());
         }
+    }
+
+    public class Cookie
+    {
+        public string Name;
+        public string Value;
+        public DateTime Expires;
+        public string Domain;
+        public string Path;
     }
 
 }
