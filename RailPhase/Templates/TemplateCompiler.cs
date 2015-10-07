@@ -130,8 +130,12 @@ namespace RailPhase
 
             var assemblyReferences = new List<string>();
             assemblyReferences.Add("RailPhase.dll");
+            assemblyReferences.Add("mscorlib.dll");
+            assemblyReferences.Add("System.dll");
+            assemblyReferences.Add("System.Core.dll");
+            assemblyReferences.Add("EntityFramework.dll");
 
-            if(contextType != null)
+            if (contextType != null)
                 assemblyReferences.Add(contextType.Assembly.Location);
 
             Type extendsType = null;
@@ -147,6 +151,8 @@ namespace RailPhase
             s.AppendLine("using System;");
             s.AppendLine("using System.Text;");
             s.AppendLine("using System.Collections.Generic;");
+            s.AppendLine("using System.Linq;");
+            s.AppendLine("using System.Data.Entity;");
             s.AppendLine("using RailPhase;");
 
             // Add custom usings from template
@@ -154,8 +160,27 @@ namespace RailPhase
             {
                 var assembly = Utils.AssemblyByName(ns);
                 if (assembly != null)
+                {
                     assemblyReferences.Add(assembly.Location);
-                s.AppendLine("using " + ns + ";");
+                    s.AppendLine("using " + ns + ";");
+                }
+                else if (ns.Contains(","))
+                {
+                    var usingElements = ns.Split(',');
+                    
+                    if(usingElements.Length == 2)
+                    {
+                        var namespaceName = usingElements[0].Trim();
+                        var assemblyName = usingElements[1].Trim();
+
+                        assemblyReferences.Add(Utils.AssemblyByName(assemblyName).Location);
+                        s.AppendLine("using " + namespaceName + ";");
+                    }
+                }
+                else
+                {
+                    s.AppendLine("using " + ns + ";");
+                }
             }
 
             s.AppendLine("namespace RailPhase.TemplateCache {");
