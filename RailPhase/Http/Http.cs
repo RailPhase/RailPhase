@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Web;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -68,7 +69,7 @@ namespace RailPhase
                         var value = "";
                         if (keyValue.Length >= 2)
                             value = keyValue[1];
-                        GET[key] = value;
+                        GET[key] = System.Uri.UnescapeDataString(value.Replace('+', ' '));
                     }
                 }
             }
