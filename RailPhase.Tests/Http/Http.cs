@@ -116,5 +116,71 @@ namespace RailPhase.Tests.Http
             Assert.True(response.Contains(additionalHeaders));
             Assert.True(response.EndsWith(responseText));
         }
+
+        [Test]
+        public void Http_RedirectResponse()
+        {
+            {
+                app.AddUrlPattern(
+                    "^/test-httpredirect$",
+                    request => new RedirectResponse("/thenewlocation")
+                    );
+
+                string response = GetResponseFromUrl("/test-httpredirect");
+
+                Assert.True(response.StartsWith("HTTP/1.1 307 Temporary Redirect"));
+                Assert.True(response.Contains("Location:/thenewlocation"));
+            }
+
+            {
+                app.AddUrlPattern(
+                    "^/test-httpredirect-permanent$",
+                    request => new RedirectResponse("/thenewlocation", permanentRedirect: true)
+                    );
+
+                string permanentResponse = GetResponseFromUrl("/test-httpredirect-permanent");
+
+                Assert.True(permanentResponse.StartsWith("HTTP/1.1 301 Moved Permanently"));
+                Assert.True(permanentResponse.Contains("Location:/thenewlocation"));
+            }
+        }
+
+        [Test]
+        public void Http_HttpResponse_Cookies()
+        {
+            var cookieName = "someCookie";
+            var cookieContent = "someContent";
+            var cookiePath = "/cookiepath/yup";
+            var cookieDomain = "example.com";
+            var cookieExpires = DateTime.Parse("Wed, 09 Jun 2021 10:18:14 GMT");
+
+            app.AddUrlPattern(
+                "^/test-httpresponse-cookie$",
+                request => new HttpResponse(
+                        "",
+                        cookies: new Cookie[] {
+                            new Cookie
+                            {
+                                Name = cookieName,
+                                Value = cookieContent,
+                                Domain = cookieDomain,
+                                Expires = cookieExpires,
+                                Path = cookiePath
+                            }
+                        }
+                    )
+                );
+
+            string response = GetResponseFromUrl("/test-httpresponse-cookie");
+
+            Assert.True(response.Contains(
+                "Set-Cookie:" + cookieName + "=" + cookieContent
+                + ";Expires=" + cookieExpires.ToRFC822String()
+                + ";Domain=" + cookieDomain
+                + ";Path=" + cookiePath
+                ));
+        }
+
+
     }
 }

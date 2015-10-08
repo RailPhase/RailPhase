@@ -308,7 +308,7 @@ namespace RailPhase
             {
                 foreach(var cookie in cookies)
                 {
-                    responseText.Append("Set-Cookie: " + cookie.Name + "=" + cookie.Value);
+                    responseText.Append("Set-Cookie:" + cookie.Name + "=" + cookie.Value);
                     if (cookie.Expires != null)
                     {
                         responseText.Append(";Expires=" + cookie.Expires.ToRFC822String());
