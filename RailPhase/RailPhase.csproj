@@ -74,8 +74,10 @@
     <Compile Include="Data\Model.cs" />
     <Compile Include="Forms\Form.cs" />
     <Compile Include="Forms\FormField.cs" />
-    <Compile Include="Http\Http.cs" />
+    <Compile Include="Http\Cookie.cs" />
     <Compile Include="App.cs" />
+    <Compile Include="Http\HttpRequest.cs" />
+    <Compile Include="Http\HttpResponse.cs" />
     <Compile Include="Http\ServeStatic.cs" />
     <Compile Include="Modules\Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
