@@ -7,14 +7,14 @@ From the application's point of view, a template is a just function that returns
 
 Templates are usually loaded from files (but you can load strings, too). Like this:
 
-````language:csharp
+````csharp
 var renderTemplate = Template.FromFile("MyTemplate.html");
 var htmlContent = renderTemplate(context: null);
 ````
 
 While `MyTemplate.html` could be something like this:
 
-````language:html
+````html
 <h1>Hello World!</h1>
 The current time is {{DateTime.Now}}.
 ````
@@ -22,7 +22,7 @@ The current time is {{DateTime.Now}}.
 The `DateTime.Now` tag is evaluated and replaced on server side, so the `renderTemplate` call returns
 pure HTML code with all template tags replaced:
 
-````language:html
+````html
 <h1>Hello World!</h1>
 The current time is 1/2/2016 1:02:15 PM.
 ````
@@ -47,7 +47,7 @@ information and the template describes how to format it.
 When working with context objects, you need to specify the type of the context object in your
 template. Use the `context` tag to do this:
 
-````language:html
+````html
 {% context MyApp.MyClass %}
 ````
 
@@ -56,7 +56,7 @@ template. Use the `context` tag to do this:
 Let's say you are creating a blog. Then your website is basically a list of articles, which could be
 represented like this:
 
-````language:csharp
+````csharp
 namespace MyBlog
 {
     public class Article
@@ -72,7 +72,7 @@ namespace MyBlog
 
 Then, the template could look like this:
 
-````language:html
+````html
 {% context MyBlog.Article %}
 
 <h1>{{Title}}</h1>
@@ -87,7 +87,7 @@ Then, the template could look like this:
 
 And in your view, you simply pass the article to the template:
 
-````language:csharp
+````csharp
 public HttpResponse ViewArticle(HttpRequest request)
 {
   var article = GetArticle(request);
