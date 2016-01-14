@@ -156,6 +156,15 @@ namespace RailPhase
 
             RawBody = Encoding.UTF8.GetBytes(responseText.ToString());
         }
+
+        /// <summary>
+        /// Implicit conversion from string to HttpResponse
+        /// </summary>
+        /// <param name="s"></param>
+        public static implicit operator HttpResponse(string s)
+        {
+            return new HttpResponse(s);
+        }
     }
 
     public class RedirectResponse : HttpResponse
