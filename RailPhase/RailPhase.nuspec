@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/LukasBoersma/RailPhase/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/LukasBoersma/RailPhase/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A web framework for .NET</description>
+    <copyright>Copyright Lukas Boersma 2015</copyright>
+  </metadata>
+</package>
