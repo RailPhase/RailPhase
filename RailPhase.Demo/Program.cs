@@ -13,11 +13,21 @@ namespace RailPhase.Demo
             // Create a simple web app and serve content on to URLs.
             var app = new App();
 
-            // Define the URL patterns
-            app.AddUrlPattern("^/$", (request) => new HttpResponse("<h1>Hello World</h1>"));
+            // Define the URL patterns to respond to incoming requests.
+            // Any request that does not match one of these patterns will
+            // be served by app.NotFoundView, which defaults to a simple
+            // 404 message.
+
+            // Easiest way to respond to a request: return a string
+            app.AddUrlPattern("^/$", (request) => "Hello World");
+            // More complex response, see below
             app.AddUrlPattern("^/info$", InfoView);
 
+            // Start listening for HTTP requests. Default port is 8080.
+            // This method does never return!
             app.RunTestServer();
+
+            // Now you should be able to visit me in your browser on http://localhost:8080
         }
 
         /// <summary>
@@ -32,7 +42,7 @@ namespace RailPhase.Demo
             // to display information about the request. Normally, we would
             // pass some custom object here, containing the information we
             // want to display.
-            var body = render(request);
+            var body = render(context: request);
 
             // Return a simple Http response.
             // We could also return non-HTML content or error codes here
