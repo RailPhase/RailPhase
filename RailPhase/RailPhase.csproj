@@ -78,10 +78,10 @@
     <Compile Include="App.cs" />
     <Compile Include="Http\HttpRequest.cs" />
     <Compile Include="Http\HttpResponse.cs" />
-    <Compile Include="Http\ServeStatic.cs" />
+    <Compile Include="Views\ServeStatic.cs" />
     <Compile Include="Modules\Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Http\UrlPattern.cs" />
+    <Compile Include="Views\UrlPattern.cs" />
     <Compile Include="RailPhaseConfig.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
