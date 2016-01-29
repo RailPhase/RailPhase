@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RailPhase.Tests
@@ -48,6 +49,26 @@ namespace RailPhase.Tests
             }
 
             return s.ToString();
+        }
+
+        public const string AppPrefix = "http://localhost:21808/";
+
+        public static void AppTest(App app, Action innerAction)
+        {
+            var appThread = new Thread(() => {
+                app.RunHttpServer(AppPrefix);
+            });
+
+            try
+            {
+                appThread.Start();
+                innerAction();
+            }
+            finally
+            {
+                app.Stop();
+                appThread.Join();
+            }
         }
     }
 }

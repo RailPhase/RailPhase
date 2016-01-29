@@ -16,7 +16,7 @@ namespace RailPhase.Tests.Requests
 
 
         [Test]
-        public void ConstUrls()
+        public void UrlPatterns_ConstUrls()
         {
             // Generate many random strings and make sure they work correctly with the app.AddUrl view.
             var urls = new Dictionary<string, int>();
@@ -34,30 +34,18 @@ namespace RailPhase.Tests.Requests
                 }
             }
 
-            var prefix = "http://localhost:21808/";
-
-            var appThread = new Thread(() => {
-                app.RunHttpServer(prefix);
-            });
-
-            try
+            TestUtils.AppTest(app, () =>
             {
-                appThread.Start();
-
                 var client = new WebClient();
 
                 foreach (var url in urls.Keys)
                 {
                     var expectedResult = urls[url].ToString();
-                    var result = client.DownloadString(prefix + url);
+                    var result = client.DownloadString(TestUtils.AppPrefix + url);
                     Assert.AreEqual(expectedResult, result);
                 }
-            }
-            finally
-            {
-                app.Stop();
-                appThread.Join();
-            }
+            });
+
         }
     }
 }

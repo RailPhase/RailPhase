@@ -55,6 +55,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Requests\Requests.cs" />
     <Compile Include="Requests\UrlPatterns.cs" />
     <Compile Include="Templates\Templates.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
