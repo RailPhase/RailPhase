@@ -55,9 +55,11 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Requests\UrlPatterns.cs" />
     <Compile Include="Templates\Templates.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Templates\TemplatesFuzzy.cs" />
+    <Compile Include="TestUtils.cs" />
     <Compile Include="Utils\Dates.cs" />
     <Compile Include="Utils\Html.cs" />
     <Compile Include="Utils\Paths.cs" />

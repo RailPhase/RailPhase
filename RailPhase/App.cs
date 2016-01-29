@@ -88,22 +88,7 @@ namespace RailPhase
         public void AddUrlPattern(string pattern, View view) { urlPatterns.Add(new UrlPattern(pattern, view)); }
 
         public void AddUrlPattern(string pattern, StringView view) { urlPatterns.Add(new UrlPattern(pattern, StringToVoidView(view))); }
-
-        /// <summary>
-        /// Adds a new URL pattern with a regex pattern that responds to requests with a template.
-        /// </summary>
-        /// <param name="pattern">A string in .NET Regex Syntax, specifying the URL pattern.</param>
-        /// <param name="template">The TemplateRenderer that is used to render the response.</param>
-        /// <param name="contentType">The optional HTTP content-type. Default is "text/html".</param>
-        public void AddUrlPattern(string pattern, TemplateRenderer template, string contentType = "text/html")
-        {
-            AddUrlPattern(pattern, StringToVoidView((context) =>
-            {
-                context.Response.ContentType = contentType;
-                return template(null);
-            }));
-        }
-
+        
         /// <summary>
         /// Adds a new URL pattern with a regex pattern that responds to requests with a template.
         /// </summary>
@@ -113,7 +98,11 @@ namespace RailPhase
         public void AddUrlPattern(string pattern, string templateFile, string contentType = "text/html")
         {
             TemplateRenderer template = Template.FromFile(templateFile);
-            AddUrlPattern(pattern, template, contentType);
+            AddUrlPattern(pattern, StringToVoidView((context) =>
+            {
+                context.Response.ContentType = contentType;
+                return template(null);
+            }));
         }
 
         /// <summary>
@@ -121,15 +110,21 @@ namespace RailPhase
         /// </summary>
         public void AddUrl(string url, View view)
         {
+            if (!url.StartsWith("/"))
+                url = "/" + url;
+
             AddUrlPattern("^" + Regex.Escape(url) + "$", view);
         }
 
         /// <summary>
-        /// Adds a new URL pattern with a static URL. The URL pattern responds to request with the given template.
+        /// Adds a new URL pattern with a static URL.
         /// </summary>
-        public void AddUrl(string url, TemplateRenderer template, string contentType = "text/html")
+        public void AddUrl(string url, StringView view)
         {
-            AddUrlPattern("^" + Regex.Escape(url) + "$", template, contentType);
+            if (!url.StartsWith("/"))
+                url = "/" + url;
+
+            AddUrlPattern("^" + Regex.Escape(url) + "$", StringToVoidView(view));
         }
 
         /// <summary>
@@ -137,8 +132,10 @@ namespace RailPhase
         /// </summary>
         public void AddUrl(string url, string templateFile, string contentType = "text/html")
         {
-            TemplateRenderer template = Template.FromFile(templateFile);
-            AddUrl(url, template, contentType);
+            if (!url.StartsWith("/"))
+                url = "/" + url;
+
+            AddUrlPattern(url, templateFile, contentType);
         }
 
         /// <summary>
@@ -194,9 +191,10 @@ namespace RailPhase
 
             Context context = null;
 
+            string path = httpContext.Request.Url.AbsolutePath;
+
             foreach (var urlPattern in urlPatterns)
             {
-                string path = httpContext.Request.Url.AbsolutePath;
                 if (urlPattern.Pattern.IsMatch(path))
                 {
                     foundPatternMatch = true;
