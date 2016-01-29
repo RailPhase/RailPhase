@@ -27,18 +27,19 @@ namespace RailPhase
             {"swf", "application/x-shockwave-flash"},
             {"flv", "video/x-flv"},
             {"pdf", "application/pdf"},
-        }; 
+        };
 
-        public static RawHttpResponse ServeStaticFiles(HttpRequest request, string urlPrefix, string rootDirectory)
+        public static void ServeStaticFiles(Context context, string urlPrefix, string rootDirectory)
         {
             string root = Path.GetFullPath(rootDirectory);
-            string relativeFilePath = Utils.MakeRelativePath(request.GetParameterASCII("DOCUMENT_URI"), urlPrefix);
+            string relativeFilePath = Utils.MakeRelativePath(context.Request.Url.AbsolutePath, urlPrefix);
             string filePath = Path.GetFullPath(Path.Combine(rootDirectory, relativeFilePath));
             
             // No ../ allowed! Make sure only files inside the rootDirectory are server.
             if(!filePath.StartsWith(root) || !File.Exists(filePath))
             {
-                return new HttpResponse("<h1>404 Not Found</h1>", status: "404 Not Found");
+                context.Response.StatusCode = 404;
+                context.WriteResponse("<h1>404 Not Found</h1>");
             }
 
             // Try to find the content type for this file extension
@@ -47,24 +48,12 @@ namespace RailPhase
             string contentType = null;
             ContentTypesByExtension.TryGetValue(extension, out contentType);
 
-            var rawData = File.ReadAllBytes(filePath);
-
-            var head = "";
-
             // If we found a content type for this file, add it to the HTTP response, otherwise omit it.
             if (contentType != null)
-                head = "HTTP/1.1 200 OK\nContent-Type: " + contentType + "\n\n";
-            else
-                head = "HTTP/1.1 200 OK\n\n";
-
-            byte[] rawHead = Encoding.ASCII.GetBytes(head);
-
-            // Concatenate rawHead and rawData into body
-            byte[] body = new byte[rawHead.Length + rawData.Length];
-            Buffer.BlockCopy(rawHead, 0, body, 0, rawHead.Length);
-            Buffer.BlockCopy(rawData, 0, body, rawHead.Length, rawData.Length);
-
-            return new RawHttpResponse(body);
+                context.Response.ContentType = contentType;
+            
+            // Copy the file contents to the response stream
+            File.OpenRead(filePath).CopyTo(context.ResponseStream);
         }
     }
 }

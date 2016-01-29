@@ -1,4 +1,4 @@
-﻿{% context RailPhase.HttpRequest,RailPhase %}
+﻿{% context RailPhase.Context,RailPhase %}
 <!DOCTYPE html>
 <html>
 
@@ -12,32 +12,21 @@
 <body>
 
   <div class="container">
-    <h1>Request <a href="{{Uri}}">{{Uri}}</a></h1>
+    <h1>Request <a href="{{Request.Url}}">{{Request.Url}}</a></h1>
     
     <hr>
-    
-    <h2>Request Body</h2>
-    {% if String.IsNullOrEmpty(Body) %}
-      <p>[Empty Body]</p>
-    {% else %}
-      <div class="well">
-        <pre>{{Body}}</pre>
-      </div>
-    {% endif %}
 
-    <hr>
-
-    <h2>Server parameters</h2>
+    <h2>Request Headers</h2>
 
     <table class="table table-striped table-hover">
       <tr>
         <th>Name</th>
         <th>Value</th>
       </tr>
-      {% for parameter in ServerParameters %}
+      {% for header in Request.Headers.AllKeys %}
       <tr>
-        <td>{{parameter.Key}}</td>
-        <td>{{Encoding.ASCII.GetString(parameter.Value)}}</td>
+        <td>{{header}}</td>
+        <td>{{Request.Headers[header]}}</td>
       </tr>
       {% endfor %}
     </table>

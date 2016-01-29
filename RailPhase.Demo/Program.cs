@@ -25,7 +25,7 @@ namespace RailPhase.Demo
 
             // Start listening for HTTP requests. Default port is 8080.
             // This method does never return!
-            app.RunTestServer();
+            app.RunHttpServer();
 
             // Now you should be able to visit me in your browser on http://localhost:8080
         }
@@ -33,7 +33,7 @@ namespace RailPhase.Demo
         /// <summary>
         /// A view that generates a simple request info page
         /// </summary>
-        static HttpResponse InfoView(RailPhase.HttpRequest request)
+        static string InfoView(RailPhase.Context request)
         {
             // Get the template for the info page.
             var render = Template.FromFile("InfoTemplate.html");
@@ -42,12 +42,7 @@ namespace RailPhase.Demo
             // to display information about the request. Normally, we would
             // pass some custom object here, containing the information we
             // want to display.
-            var body = render(context: request);
-
-            // Return a simple Http response.
-            // We could also return non-HTML content or error codes here
-            // by setting the parameters in the HttpResponse constructor.
-            return new HttpResponse(body);
+            return render(context: request);
         }
     }
 

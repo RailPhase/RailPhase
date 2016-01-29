@@ -130,10 +130,7 @@ namespace RailPhase
 
             var assemblyReferences = new List<string>();
             assemblyReferences.Add("RailPhase.dll");
-            assemblyReferences.Add("mscorlib.dll");
-            assemblyReferences.Add("System.dll");
-            assemblyReferences.Add("System.Core.dll");
-            assemblyReferences.Add("EntityFramework.dll");
+
 
             if (contextType != null)
                 assemblyReferences.Add(contextType.Assembly.Location);
@@ -151,8 +148,7 @@ namespace RailPhase
             s.AppendLine("using System;");
             s.AppendLine("using System.Text;");
             s.AppendLine("using System.Collections.Generic;");
-            s.AppendLine("using System.Linq;");
-            s.AppendLine("using System.Data.Entity;");
+
             s.AppendLine("using RailPhase;");
 
             // Add custom usings from template

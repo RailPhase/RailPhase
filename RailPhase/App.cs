@@ -10,18 +10,21 @@ using System.IO;
 using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
+using System.Web;
 
 namespace RailPhase
 {
     /// <summary>
-    /// A view handles a request and returns a response.
+    /// Handles a HTTP request and returns a response.
     /// </summary>
-    /// <remarks>
-    /// Views are the main 
-    /// </remarks>
-    /// <param name="request">The HTTP request to handle.</param>
-    /// <returns>Returns a RawHttpResponse object (usually HttpResponse).</returns>
-    public delegate RawHttpResponse View(HttpRequest request);
+    /// <param name="context">A <see cref="Context"/> object that contains information about the incoming request.</param>
+    /// <returns>Returns the response as a string. If the string is not null, it is written to the responsestream. Otherwise, the return value is ignored.</returns>
+    public delegate string StringView(Context context);
+
+    /// <summary>
+    /// Handles a HTTP request.
+    /// </summary>
+    public delegate void View(Context context);
 
     /// <summary>
     /// The main class for RailPhase web applications.
@@ -36,11 +39,24 @@ namespace RailPhase
 
         public int MaxParallelRequests { get; set; } = Environment.ProcessorCount;
 
+        public Encoding DefaultResponseEncoding { get; set; } = Encoding.UTF8;
+        public string DefaultContentType { get; set; } = "text/html";
+
         Queue<Task> OpenRequests = new Queue<Task>();
 
         public void ConnectDatabase(string connection = "Database")
         {
             Database.InitializeDatabase(connection);
+        }
+
+        public static View StringToVoidView(StringView view)
+        {
+            return (Context context) =>
+            {
+                var response = view(context);
+                if (response != null)
+                    context.WriteResponse(response);
+            };
         }
 
         /// <summary>
@@ -67,6 +83,8 @@ namespace RailPhase
         /// <seealso cref="RailPhase.View"/>
         public void AddUrlPattern(string pattern, View view) { urlPatterns.Add(new UrlPattern(pattern, view)); }
 
+        public void AddUrlPattern(string pattern, StringView view) { urlPatterns.Add(new UrlPattern(pattern, StringToVoidView(view))); }
+
         /// <summary>
         /// Adds a new URL pattern with a regex pattern that responds to requests with a template.
         /// </summary>
@@ -75,10 +93,11 @@ namespace RailPhase
         /// <param name="contentType">The optional HTTP content-type. Default is "text/html".</param>
         public void AddUrlPattern(string pattern, TemplateRenderer template, string contentType = "text/html")
         {
-            AddUrlPattern(pattern, (request) =>
+            AddUrlPattern(pattern, StringToVoidView((context) =>
             {
-                return new HttpResponse(template(null), contentType: contentType);
-            });
+                context.Response.ContentType = contentType;
+                return template(null);
+            }));
         }
 
         /// <summary>
@@ -106,10 +125,7 @@ namespace RailPhase
         /// </summary>
         public void AddUrl(string url, TemplateRenderer template, string contentType = "text/html")
         {
-            AddUrl(url, (request) =>
-            {
-                return new HttpResponse(template(null), contentType: contentType);
-            });
+            AddUrlPattern("^" + Regex.Escape(url) + "$", template, contentType);
         }
 
         /// <summary>
@@ -124,10 +140,11 @@ namespace RailPhase
         /// <summary>
         /// The view that should be called when a request does not match any of the URL patterns.
         /// </summary>
-        public View NotFoundView = (request) =>
+        public View NotFoundView = StringToVoidView((context) =>
         {
-            return new HttpResponse("<h1>404 Not Found</h1>", contentType: "text/html", status: "404 NOT FOUND");
-        };
+            context.Response.StatusCode = 404;
+            return "<h1>404 Not Found</h1>";
+        });
 
         /// <summary>
         /// Registers an URL pattern with a view that serves the local static files in the given directory.
@@ -136,14 +153,10 @@ namespace RailPhase
         /// <param name="rootDirectory">The root directory where the served files are located. Must end with a slash.</param>
         public void AddStaticDirectory(string rootDirectory, string url = "/static/")
         {
-            View view = (HttpRequest request) =>
+            AddUrl(url, (Context context) =>
             {
-                return ServeStatic.ServeStaticFiles(request, url, rootDirectory);
-            };
-
-            var urlPattern = "^" + Regex.Escape(url) + ".*$";
-
-            AddUrlPattern(urlPattern, view);
+                ServeStatic.ServeStaticFiles(context, url, rootDirectory);
+            });
         }
 
         /// <summary>
@@ -168,108 +181,64 @@ namespace RailPhase
         /// </remarks>
         /// <param name="request">The HTTPRequest to handle</param>
         /// <returns>Returns a HTTPResponse, generated by one of the registered URL patterns, or a 404 response if no pattern matches.</returns>
-        public RawHttpResponse HandleRequest(HttpRequest request)
+        public void HandleRequest(HttpListenerContext httpContext)
         {
             var serveTimer = new Stopwatch();
             serveTimer.Start();
-            RawHttpResponse response = null;
+
+            bool foundPatternMatch = false;
+
+            Context context = null;
 
             foreach (var urlPattern in urlPatterns)
             {
-                string path = request.GetParameterASCII("DOCUMENT_URI");
+                string path = httpContext.Request.Url.AbsolutePath;
                 if (urlPattern.Pattern.IsMatch(path))
                 {
-                    request.PatternMatch = new UrlPatternMatch
+                    foundPatternMatch = true;
+
+                    var patternMatch = new UrlPatternMatch
                     {
                         Pattern = urlPattern,
                         Match = urlPattern.Pattern.Match(path)
                     };
 
+                    context = new Context(httpContext, patternMatch);
+
                     // Todo: Catch errors
-                    response = urlPattern.View(request);
+                    urlPattern.View(context);
+
                     break;
                 }
             }
 
-            if (response == null)
-                response = NotFoundView(request);
+            if (!foundPatternMatch)
+            {
+                //Todo: Log 404
+                context = new Context(httpContext, null);
+                NotFoundView(context);
+            }
 
             // Save database changes after each request
             Database.SaveAllModelChanges();
 
             serveTimer.Stop();
-            //Console.WriteLine("Served " + request.Uri + " in " + ((double)serveTimer.ElapsedTicks / TimeSpan.TicksPerMillisecond) + "ms");
-            return response;
         }
 
-        /// <summary>
-        /// Handles an incoming FastCGI request. You usually do not need to call this.
-        /// </summary>
-        public void ReceiveFcgiRequest(object sender, FastCGI.Request fcgiRequest)
+        protected void ApplyDefaultSettings(HttpListenerContext httpContext)
         {
-            var requestTask = new Task(() =>
-            {
-                var httpRequest = new HttpRequest(fcgiRequest);
-                var response = HandleRequest(httpRequest);
-                if (response.RawBody != null)
-                    fcgiRequest.WriteResponse(response.RawBody);
-                fcgiRequest.Close();
-            });
-            requestTask.Start();
-
-            if (EnableAsyncProcessing)
-                lock(OpenRequests)
-                    OpenRequests.Enqueue(requestTask);
-            else
-                requestTask.Wait();
+            httpContext.Response.ContentEncoding = DefaultResponseEncoding;
+            httpContext.Response.ContentType = DefaultContentType;
         }
-
+        
         /// <summary>
-        /// Starts listening as a FastCGI client. This method never returns! 
-        /// </summary>
-        /// <remarks>
-        /// This method starts the FastCGI client and will respond to any requests that are received over FastCGI.
-        /// If you want to host a HTTP server for testing, you can use <see cref="RunTestServer(string)"/> instead, although
-        /// this is not recommended for production use.
-        /// Any URL patterns and other configuration have to be set before calling this, because this method never returns.
-        /// </remarks>
-        public void RunFcgiClient(int port = 19000)
-        {
-            var fcgiApp = new FastCGI.FCGIApplication();
-            fcgiApp.OnRequestReceived += ReceiveFcgiRequest;
-            fcgiApp.Listen(port);
-
-            while (true)
-            {
-                bool gotRequest = fcgiApp.Process();
-
-                while (OpenRequests.Count > MaxParallelRequests && OpenRequests.Count > 0)
-                {
-                    Task oldestTask;
-
-                    lock(OpenRequests)
-                        oldestTask = OpenRequests.Dequeue();
-
-                    oldestTask.Wait();
-                }
-
-                if (!gotRequest)
-                    Thread.Sleep(10);
-            }
-
-        }
-
-
-        /// <summary>
-        /// Starts a simple HTTP server for testing purposes. This method never returns!
+        /// Starts a HTTP server that serves incoming requests. This method never returns!
         /// </summary>
         /// <remarks>
         /// The web server will accept HTTP requests from the given prefix (default is "http://localhost:8080").
-        /// Using this method is not recommended for production use. Instead, use a dedicated webserver like Apache or nginx,
-        /// and use <see cref="RunFcgiClient(int)"/> to accept FastCGI requests from the webserver.
         /// Any URL patterns and other configuration have to be set before calling this, because this method never returns.
         /// </remarks>
-        public void RunTestServer(string prefix = "http://localhost:8080/")
+        public void RunHttpServer(string prefix = "http://localhost:8080/")
         {
             var listener = new HttpListener();
             listener.Prefixes.Add(prefix);
@@ -278,12 +247,14 @@ namespace RailPhase
             while (true)
             {
                 var httpContext = listener.GetContext();
-                var requestTask = new Task(() =>
-                {
-                    var httpRequest = HttpRequest.FromHttpListenerContext(httpContext);
-                    var response = HandleRequest(httpRequest);
-                    response.WriteToHttpListenerContext(httpContext);
+
+                ApplyDefaultSettings(httpContext);
+
+                var requestTask = new Task(() => {
+                    HandleRequest(httpContext);
+                    httpContext.Response.OutputStream.Close();
                 });
+
                 requestTask.Start();
 
                 if (EnableAsyncProcessing)

@@ -72,12 +72,8 @@
     <Compile Include="Auth\User.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Data\Model.cs" />
-    <Compile Include="Forms\Form.cs" />
-    <Compile Include="Forms\FormField.cs" />
-    <Compile Include="Http\Cookie.cs" />
     <Compile Include="App.cs" />
-    <Compile Include="Http\HttpRequest.cs" />
-    <Compile Include="Http\HttpResponse.cs" />
+    <Compile Include="Views\Context.cs" />
     <Compile Include="Views\ServeStatic.cs" />
     <Compile Include="Modules\Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

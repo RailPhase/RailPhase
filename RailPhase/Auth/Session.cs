@@ -30,22 +30,13 @@ namespace RailPhase
         public virtual User User { get; set; }
 
         public static TimeSpan SessionExpirationTime = TimeSpan.FromDays(10);
-
-        public Cookie MakeCookie()
+        
+        public static Session FromContext(Context context)
         {
-            return new Cookie
+            var cookie = context.Request.Cookies["Session_Token"];
+            if (cookie != null)
             {
-                Name = "Session_Token",
-                Value = Token,
-                Expires = DateTime.Now + SessionExpirationTime
-            };
-        }
-
-        public static Session FromRequest(HttpRequest request)
-        {
-            if (request.Cookies.ContainsKey("Session_Token"))
-            {
-                var token = request.Cookies["Session_Token"];
+                var token = cookie.Value;
                 var session = Objects.FirstOrDefault(i => i.Token == token);
                 return session;
             }
