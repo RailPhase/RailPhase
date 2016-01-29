@@ -42,6 +42,10 @@ namespace RailPhase
         public Encoding DefaultResponseEncoding { get; set; } = Encoding.UTF8;
         public string DefaultContentType { get; set; } = "text/html";
 
+        public bool IsRunning { get; set; } = false;
+
+        public void Stop() { IsRunning = false; }
+
         Queue<Task> OpenRequests = new Queue<Task>();
 
         public void ConnectDatabase(string connection = "Database")
@@ -232,44 +236,65 @@ namespace RailPhase
         }
         
         /// <summary>
-        /// Starts a HTTP server that serves incoming requests. This method never returns!
+        /// Starts a HTTP server that serves incoming requests. This method blocks until <see cref="Stop"/> is called.
         /// </summary>
         /// <remarks>
         /// The web server will accept HTTP requests from the given prefix (default is "http://localhost:8080").
-        /// Any URL patterns and other configuration have to be set before calling this, because this method never returns.
         /// </remarks>
         public void RunHttpServer(string prefix = "http://localhost:8080/")
         {
-            var listener = new HttpListener();
-            listener.Prefixes.Add(prefix);
-            listener.Start();
-
-            while (true)
+            using (var listener = new HttpListener())
             {
-                var httpContext = listener.GetContext();
+                listener.Prefixes.Add(prefix);
+                listener.Start();
 
-                ApplyDefaultSettings(httpContext);
+                IsRunning = true;
 
-                var requestTask = new Task(() => {
-                    HandleRequest(httpContext);
-                    httpContext.Response.OutputStream.Close();
-                });
+                Task<HttpListenerContext> listenerTask = null;
 
-                requestTask.Start();
-
-                if (EnableAsyncProcessing)
+                while (IsRunning)
                 {
-                    OpenRequests.Enqueue(requestTask);
-                    while (OpenRequests.Count > MaxParallelRequests && OpenRequests.Count > 0)
+                    if (listenerTask == null)
                     {
-                        var oldestTask = OpenRequests.Dequeue();
-                        oldestTask.Wait();
+                        listenerTask = listener.GetContextAsync();
+                    }
+
+                    if (listenerTask.IsCompleted)
+                    {
+                        var httpContext = listenerTask.Result;
+                        listenerTask = null;
+
+                        ApplyDefaultSettings(httpContext);
+
+                        var requestTask = new Task(() =>
+                        {
+                            HandleRequest(httpContext);
+                            httpContext.Response.OutputStream.Close();
+                        });
+
+                        requestTask.Start();
+
+                        if (EnableAsyncProcessing)
+                        {
+                            OpenRequests.Enqueue(requestTask);
+                            while (OpenRequests.Count > MaxParallelRequests && OpenRequests.Count > 0)
+                            {
+                                var oldestTask = OpenRequests.Dequeue();
+                                oldestTask.Wait();
+                            }
+                        }
+                        else
+                        {
+                            requestTask.Wait();
+                        }
+                    }
+                    else
+                    {
+                        Thread.Sleep(1);
                     }
                 }
-                else
-                {
-                    requestTask.Wait();
-                }
+                
+                listener.Stop();
             }
         }
 
