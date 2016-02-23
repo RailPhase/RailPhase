@@ -135,7 +135,7 @@ namespace RailPhase
             if (!url.StartsWith("/"))
                 url = "/" + url;
 
-            AddUrlPattern(url, templateFile, contentType);
+            AddUrlPattern("^" + url + "$", templateFile, contentType);
         }
 
         /// <summary>
@@ -154,7 +154,12 @@ namespace RailPhase
         /// <param name="rootDirectory">The root directory where the served files are located. Must end with a slash.</param>
         public void AddStaticDirectory(string rootDirectory, string url = "/static/")
         {
-            AddUrl(url, (Context context) =>
+            if (!url.StartsWith("/"))
+                url = "/" + url;
+            if (!url.EndsWith("/"))
+                url = url + "/";
+
+            AddUrlPattern("^" + url + ".*$", (Context context) =>
             {
                 ServeStatic.ServeStaticFiles(context, url, rootDirectory);
             });
