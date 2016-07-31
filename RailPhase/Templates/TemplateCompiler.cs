@@ -73,7 +73,7 @@ namespace RailPhase
                 s.AppendLine("var context = (" + contextType.FullName + ")contextObj;");
 
                 // Import all public fields and properties so that they are available locally
-                foreach (var field in contextType.GetFields())
+                foreach (var field in contextType.GetFields(BindingFlags.Instance | BindingFlags.Public))
                 {
                     if (!field.IsStatic)
                     {
@@ -84,7 +84,7 @@ namespace RailPhase
                         }
                     }
                 }
-                foreach (var property in contextType.GetProperties())
+                foreach (var property in contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
                 {
                     if (property.CanRead)
                         s.AppendLine("var " + property.Name + " = context." + property.Name + ";");
