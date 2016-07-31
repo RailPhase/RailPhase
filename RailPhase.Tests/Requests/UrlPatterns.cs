@@ -30,7 +30,7 @@ namespace RailPhase.Tests.Requests
                 {
                     int response = i;
                     urls[randomString] = response;
-                    app.AddUrl(randomString, (c) => response.ToString());
+                    app.AddStaticStringView(randomString, (c) => response.ToString());
                 }
             }
 

@@ -19,9 +19,9 @@ namespace RailPhase.Demo
             // 404 message.
 
             // Easiest way to respond to a request: return a string
-            app.AddUrlPattern("^/$", (request) => "Hello World");
+            app.AddStringView("^/$", (request) => "Hello World");
             // More complex response, see below
-            app.AddUrlPattern("^/info$", InfoView);
+            app.AddStringView("^/info$", InfoView);
 
             // Start listening for HTTP requests. Default port is 8080.
             // This method does never return!

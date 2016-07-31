@@ -18,7 +18,7 @@ namespace RailPhase.Tests.Requests
             var expectedResponse = "Hello World";
 
             var app = new App();
-            app.AddUrl("/", (c) => expectedResponse);
+            app.AddStaticStringView("/", (c) => expectedResponse);
 
             TestUtils.AppTest(app, () =>
             {
@@ -34,7 +34,7 @@ namespace RailPhase.Tests.Requests
             var expectedResponse = "Hello World";
 
             var app = new App();
-            app.AddUrl("/", (c) => expectedResponse);
+            app.AddStaticStringView("/", (c) => expectedResponse);
 
             Action InnerTest = () =>
             {

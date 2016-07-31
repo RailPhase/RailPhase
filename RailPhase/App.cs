@@ -68,7 +68,7 @@ namespace RailPhase
         /// </summary>
         /// <remarks>
         /// When the App receives a request with a URL that matches the given pattern, the specified view will be called.
-        /// Please note that there are overloads of this method with more convenient signatures, like <see cref="AddUrlPattern(string, View)"/>.
+        /// Please note that there are overloads of this method with more convenient signatures, like <see cref="AddView(string, View)"/>.
         /// </remarks>
         /// <param name="pattern">The URL pattern to add.</param>
         /// <seealso cref="RailPhase.UrlPattern"/>
@@ -85,9 +85,9 @@ namespace RailPhase
         /// <param name="view">The View that should be called when </param>
         /// <seealso cref="RailPhase.UrlPattern"/>
         /// <seealso cref="RailPhase.View"/>
-        public void AddUrlPattern(string pattern, View view) { urlPatterns.Add(new UrlPattern(pattern, view)); }
+        public void AddView(string pattern, View view) { urlPatterns.Add(new UrlPattern(pattern, view)); }
 
-        public void AddUrlPattern(string pattern, StringView view) { urlPatterns.Add(new UrlPattern(pattern, StringToVoidView(view))); }
+        public void AddStringView(string pattern, StringView view) { urlPatterns.Add(new UrlPattern(pattern, StringToVoidView(view))); }
         
         /// <summary>
         /// Adds a new URL pattern with a regex pattern that responds to requests with a template.
@@ -95,10 +95,10 @@ namespace RailPhase
         /// <param name="pattern">A string in .NET Regex Syntax, specifying the URL pattern.</param>
         /// <param name="template">The path to the template file that is used to render the response.</param>
         /// <param name="contentType">The optional HTTP content-type. Default is "text/html".</param>
-        public void AddUrlPattern(string pattern, string templateFile, string contentType = "text/html")
+        public void AddTemplateView(string pattern, string templateFile, string contentType = "text/html")
         {
             TemplateRenderer template = Template.FromFile(templateFile);
-            AddUrlPattern(pattern, StringToVoidView((context) =>
+            AddView(pattern, StringToVoidView((context) =>
             {
                 context.Response.ContentType = contentType;
                 return template(null);
@@ -108,34 +108,34 @@ namespace RailPhase
         /// <summary>
         /// Adds a new URL pattern with a static URL.
         /// </summary>
-        public void AddUrl(string url, View view)
+        public void AddStaticView(string url, View view)
         {
             if (!url.StartsWith("/"))
                 url = "/" + url;
 
-            AddUrlPattern("^" + Regex.Escape(url) + "$", view);
+            AddView("^" + Regex.Escape(url) + "$", view);
         }
 
         /// <summary>
         /// Adds a new URL pattern with a static URL.
         /// </summary>
-        public void AddUrl(string url, StringView view)
+        public void AddStaticStringView(string url, StringView view)
         {
             if (!url.StartsWith("/"))
                 url = "/" + url;
 
-            AddUrlPattern("^" + Regex.Escape(url) + "$", StringToVoidView(view));
+            AddView("^" + Regex.Escape(url) + "$", StringToVoidView(view));
         }
 
         /// <summary>
         /// Adds a new URL pattern with a static URL. The URL pattern responds to request with a the given template.
         /// </summary>
-        public void AddUrl(string url, string templateFile, string contentType = "text/html")
+        public void AddStaticTemplateView(string url, string templateFile, string contentType = "text/html")
         {
             if (!url.StartsWith("/"))
                 url = "/" + url;
 
-            AddUrlPattern("^" + url + "$", templateFile, contentType);
+            AddTemplateView("^" + url + "$", templateFile, contentType);
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace RailPhase
             if (!url.EndsWith("/"))
                 url = url + "/";
 
-            AddUrlPattern("^" + url + ".*$", (Context context) =>
+            AddView("^" + url + ".*$", (Context context) =>
             {
                 ServeStatic.ServeStaticFiles(context, url, rootDirectory);
             });
