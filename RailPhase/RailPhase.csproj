@@ -74,6 +74,7 @@
     <Compile Include="Data\Model.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Views\Context.cs" />
+    <Compile Include="Views\Exceptions.cs" />
     <Compile Include="Views\ServeStatic.cs" />
     <Compile Include="Modules\Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -147,6 +147,26 @@ namespace RailPhase
             return "<h1>404 Not Found</h1>";
         });
 
+        public View NotAllowedView = StringToVoidView((context) =>
+        {
+            context.Response.StatusCode = 403;
+            return "<h1>403 Not Allowed</h1>";
+        });
+
+        public View InternalErrorView = StringToVoidView((context) =>
+        {
+            context.Response.StatusCode = 500;
+            return "<h1>500 Internal Server Error</h1>";
+        });
+
+        /// <summary>
+        /// If set to true (default), any exception that is thrown inside of views will cause the InternalErrorView to be served. The app will continue to run after that.
+        /// </summary>
+        /// <remarks>
+        /// If set to false, exceptions will be handled normally and cause the app to abort operations.
+        /// </remarks>
+        public bool CatchViewExceptions = true;
+
         /// <summary>
         /// Registers an URL pattern with a view that serves the local static files in the given directory.
         /// </summary>
@@ -202,20 +222,65 @@ namespace RailPhase
             {
                 if (urlPattern.Pattern.IsMatch(path))
                 {
-                    foundPatternMatch = true;
-
-                    var patternMatch = new UrlPatternMatch
+                    if (CatchViewExceptions)
                     {
-                        Pattern = urlPattern,
-                        Match = urlPattern.Pattern.Match(path)
-                    };
-
-                    context = new Context(httpContext, patternMatch);
-
-                    // Todo: Catch errors
-                    urlPattern.View(context);
-
-                    break;
+                        try
+                        {
+                            var patternMatch = new UrlPatternMatch
+                            {
+                                Pattern = urlPattern,
+                                Match = urlPattern.Pattern.Match(path)
+                            };
+                            context = new Context(httpContext, patternMatch);
+                            urlPattern.View(context);
+                            foundPatternMatch = true;
+                        }
+                        catch (NotFoundException e)
+                        {
+                            // If the view reports that it cannot serve the request, we will try different URL patterns.
+                            // The actual NotFoundView will be served at the end of this loop if no pattern can serve the request.
+                            continue;
+                        }
+                        catch (NotAllowedException e)
+                        {
+                            NotAllowedView(context);
+                        }
+                        catch (Exception e)
+                        {
+                            // We catch any exception to make sure the request will be serverd and the app will continue to run.
+                            //InternalErrorView(context);
+                            if (context == null)
+                                context = new Context(httpContext);
+                            context.AddTag<Exception>(e);
+                            RequestException.ViewDebugException(context);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var patternMatch = new UrlPatternMatch
+                            {
+                                Pattern = urlPattern,
+                                Match = urlPattern.Pattern.Match(path)
+                            };
+                            context = new Context(httpContext, patternMatch);
+                            urlPattern.View(context);
+                            foundPatternMatch = true;
+                            break;
+                        }
+                        catch (NotFoundException e)
+                        {
+                            // If the view reports that it cannot serve the request, we will try different URL patterns.
+                            // The actual NotFoundView will be served at the end of this loop if no pattern can serve the request.
+                            foundPatternMatch = false;
+                            continue;
+                        }
+                        catch (NotAllowedException e)
+                        {
+                            NotAllowedView(context);
+                        }
+                    }
                 }
             }
 

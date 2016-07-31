@@ -15,6 +15,21 @@ namespace RailPhase
 
         public UrlPatternMatch PatternMatch { get; protected set; }
 
+        protected Dictionary<Type, object> Tags = new Dictionary<Type, object>();
+
+        public void AddTag<T>(T tag) where T : class
+        {
+            Tags[typeof(T)] = tag;
+        }
+
+        public T GetTag<T>() where T : class
+        {
+            object tagObject;
+            Tags.TryGetValue(typeof(T), out tagObject);
+            T tag = tagObject as T;
+            return tag;
+        }
+
         public HttpListenerRequest Request { get { return HttpContext.Request; } }
 
         public HttpListenerResponse Response { get { return HttpContext.Response; } }
@@ -26,7 +41,7 @@ namespace RailPhase
             using (var writer = new StreamWriter(ResponseStream, Response.ContentEncoding))
             {
                 writer.Write(response);
-            }   
+            }
         }
 
         public Context(HttpListenerContext httpContext, UrlPatternMatch patternMatch = null)
