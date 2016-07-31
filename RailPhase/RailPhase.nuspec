@@ -6,8 +6,8 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>https://github.com/LukasBoersma/RailPhase/blob/master/LICENSE.txt</licenseUrl>
-    <projectUrl>https://github.com/LukasBoersma/RailPhase/</projectUrl>
+    <licenseUrl>https://github.com/RailPhase/RailPhase/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/RailPhase/RailPhase/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A web framework for .NET</description>
     <copyright>Copyright Lukas Boersma 2015</copyright>
