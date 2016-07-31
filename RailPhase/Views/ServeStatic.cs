@@ -34,26 +34,31 @@ namespace RailPhase
             string root = Path.GetFullPath(rootDirectory);
             string relativeFilePath = Utils.MakeRelativePath(context.Request.Url.AbsolutePath, urlPrefix);
             string filePath = Path.GetFullPath(Path.Combine(rootDirectory, relativeFilePath));
-            
+
             // No ../ allowed! Make sure only files inside the rootDirectory are server.
-            if(!filePath.StartsWith(root) || !File.Exists(filePath))
+            if (!filePath.StartsWith(root) || !File.Exists(filePath))
             {
                 context.Response.StatusCode = 404;
                 context.WriteResponse("<h1>404 Not Found</h1>");
             }
+            else
+            {
+                // Try to find the content type for this file extension
+                var extension = Path.GetExtension(filePath).ToLower();
+                extension = extension.Replace(".", "");
+                string contentType = null;
+                ContentTypesByExtension.TryGetValue(extension, out contentType);
 
-            // Try to find the content type for this file extension
-            var extension = Path.GetExtension(filePath).ToLower();
-            extension = extension.Replace(".", "");
-            string contentType = null;
-            ContentTypesByExtension.TryGetValue(extension, out contentType);
+                // If we found a content type for this file, add it to the HTTP response, otherwise omit it.
+                if (contentType != null)
+                    context.Response.ContentType = contentType;
 
-            // If we found a content type for this file, add it to the HTTP response, otherwise omit it.
-            if (contentType != null)
-                context.Response.ContentType = contentType;
-            
-            // Copy the file contents to the response stream
-            File.OpenRead(filePath).CopyTo(context.ResponseStream);
+                // Copy the file contents to the response stream
+                using (var stream = File.OpenRead(filePath))
+                {
+                    stream.CopyTo(context.ResponseStream);
+                }
+            }
         }
     }
 }
