@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
+using System.Diagnostics;
+using System.IO;
 
 namespace RailPhase
 {
@@ -27,11 +29,13 @@ namespace RailPhase
     {
         internal static Type CompileCsharpTemplate(string csharp, string name, List<string> assemblyReferences)
         {
+            var assemblyPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
             // Compile the given code and load it as an assembly without writing to a file.
             CSharpCodeProvider provider = new CSharpCodeProvider();
             CompilerParameters parameters = new CompilerParameters();
             parameters.GenerateInMemory = false;
             parameters.CompilerOptions = "/optimize";
+            parameters.OutputAssembly = name;
 
             parameters.ReferencedAssemblies.AddRange(assemblyReferences.ToArray());
 
@@ -129,7 +133,9 @@ namespace RailPhase
             }
 
             var assemblyReferences = new List<string>();
-            assemblyReferences.Add("RailPhase.dll");
+            assemblyReferences.Add(Utils.AssemblyByName("System").Location);
+            assemblyReferences.Add(Utils.AssemblyByName("System.Core").Location);
+            assemblyReferences.Add(Utils.AssemblyByName("RailPhase").Location);
 
 
             if (contextType != null)
@@ -140,7 +146,7 @@ namespace RailPhase
             {
                 // Compile and load the extended template if it is not already in the cache
                 LoadFile(parser.ResultExtends, out extendsType);
-                assemblyReferences.Add(extendsType.Assembly.Location);
+                assemblyReferences.Add(extendsType.Assembly.GetName().Name);
             }
 
             var s = new StringBuilder();
@@ -148,6 +154,7 @@ namespace RailPhase
             s.AppendLine("using System;");
             s.AppendLine("using System.Text;");
             s.AppendLine("using System.Collections.Generic;");
+            s.AppendLine("using System.Linq;");
 
             s.AppendLine("using RailPhase;");
 

@@ -15,7 +15,11 @@ namespace RailPhase
     {
         public static Assembly AssemblyByName(string name)
         {
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+            assemblies.Add(typeof(System.Object).Assembly);
+            assemblies.Add(typeof(System.Net.HttpListenerRequest).Assembly);
+            assemblies.Add(typeof(System.Linq.EnumerableQuery).Assembly);
+            assemblies.Add(typeof(RailPhase.App).Assembly);
 
             foreach (Assembly assembly in assemblies)
             {
