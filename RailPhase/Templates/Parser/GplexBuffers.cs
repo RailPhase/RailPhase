@@ -6,6 +6,9 @@
 // </auto-generated>
 // ==============================================================
 
+// Auto-generated code. We won't fix any warnings here, so let's suppress them.
+#pragma warning disable
+
 using System;
 using System.IO;
 using System.Text;
