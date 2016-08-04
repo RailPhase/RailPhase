@@ -33,7 +33,6 @@ namespace RailPhase
     public class App
     {
         List<UrlPattern> urlPatterns = new List<UrlPattern>();
-        List<Module> activeModules = new List<Module>();
 
         public bool EnableAsyncProcessing { get; set; } = false;
 
@@ -47,12 +46,7 @@ namespace RailPhase
         public void Stop() { IsRunning = false; }
 
         Queue<Task> OpenRequests = new Queue<Task>();
-
-        public void ConnectDatabase(string connection = "Database")
-        {
-            Database.InitializeDatabase(connection);
-        }
-
+        
         public static View StringToVoidView(StringView view)
         {
             return (Context context) =>
@@ -184,20 +178,7 @@ namespace RailPhase
                 ServeStatic.ServeStaticFiles(context, url, rootDirectory);
             });
         }
-
-        /// <summary>
-        /// Registers the URL patterns of the given Module in this app.
-        /// </summary>
-        public void AddModule(Module module)
-        {
-            foreach (var urlPattern in module.UrlPatterns)
-            {
-                AddUrlPattern(urlPattern);
-            }
-
-            activeModules.Add(module);
-        }
-
+        
         /// <summary>
         /// Handles an incoming HTTP request. You usually do not need to call this.
         /// </summary>
@@ -290,10 +271,7 @@ namespace RailPhase
                 context = new Context(httpContext, null);
                 NotFoundView(context);
             }
-
-            // Save database changes after each request
-            Database.SaveAllModelChanges();
-
+            
             serveTimer.Stop();
         }
 
