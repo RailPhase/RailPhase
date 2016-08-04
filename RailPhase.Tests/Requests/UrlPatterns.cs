@@ -41,7 +41,15 @@ namespace RailPhase.Tests.Requests
                 foreach (var url in urls.Keys)
                 {
                     var expectedResult = urls[url].ToString();
-                    var result = client.DownloadString(TestUtils.AppPrefix + url);
+                    string result = null;
+                    try
+                    {
+                        result = client.DownloadString(TestUtils.AppPrefix + url);
+                    }
+                    catch(WebException webException)
+                    {
+                        throw new WebException($"Failure on URL '{TestUtils.AppPrefix + url}': {webException.Message}", webException);
+                    }
                     Assert.AreEqual(expectedResult, result);
                 }
             });
