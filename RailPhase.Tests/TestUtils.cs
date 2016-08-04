@@ -40,8 +40,9 @@ namespace RailPhase.Tests
             for (int i = 0; i < length; i++)
             {
                 char c = urlCharacters[rand.Next(urlCharacters.Length)];
-                // Prevent two consecutive slashes
-                if (c != '/' || lastChar != '/')
+
+                // Prevent two consecutive slashes, don't start with a slash
+                if (c != '/' || lastChar != '/' && (c != '/' || i > 0))
                 {
                     s.Append(c.ToString());
                     lastChar = c;
