@@ -18,13 +18,16 @@ namespace RailPhase
     /// <seealso cref="Template.FromFile(string)"/>
     public class TemplateParserException: Exception
     {
+        /// <summary>
+        /// Create a new TemplateParserException. Used internally.
+        /// </summary>
         public TemplateParserException(string message):
             base(message)
         {
 
         }
     }
-
+    
     public abstract partial class Template
     {
         internal static Type CompileCsharpTemplate(string csharp, string name, List<string> assemblyReferences)

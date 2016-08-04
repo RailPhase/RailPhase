@@ -11,8 +11,15 @@ using System.Globalization;
 
 namespace RailPhase
 {
+    /// <summary>
+    /// Contains various helper and extension methods.
+    /// </summary>
     public static class Utils
     {
+        /// <summary>
+        /// Searches in the loaded assemblies for the given assembly name.
+        /// </summary>
+        /// <returns>Returns the assembly with the given name or null if no such assembly is loaded.</returns>
         public static Assembly AssemblyByName(string name)
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
@@ -70,6 +77,9 @@ namespace RailPhase
             }
         }
         
+        /// <summary>
+        /// Removes HTML tags from a string.
+        /// </summary>
         public static string StripHtmlTags(string html)
         {
             var text = Regex.Replace(html, @"<[^>]+>|&nbsp;", "").Trim();
@@ -77,11 +87,17 @@ namespace RailPhase
             return text;
         }
 
+        /// <summary>
+        /// Formats a date according to the RFC-822 standard.
+        /// </summary>
         public static string ToRFC822String(this DateTime timestamp)
         {
             return timestamp.ToString("ddd',' d MMM yyyy HH':'mm':'ss", CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        /// Formats a date as a human readable string.
+        /// </summary>
         public static string ToHumanDate(this DateTime timestamp)
         {
             return timestamp.ToString("dddd',' d MMMM yyyy");

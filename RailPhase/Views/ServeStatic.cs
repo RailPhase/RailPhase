@@ -6,9 +6,12 @@ using System.IO;
 
 namespace RailPhase
 {
-    class ServeStatic
+    /// <summary>
+    /// Provides a configurable <see cref="View"/> that serves static files from the filesystem.
+    /// </summary>
+    public class ServeStatic
     {
-        public static Dictionary<string, string> ContentTypesByExtension = new Dictionary<string, string>()
+        private static Dictionary<string, string> ContentTypesByExtension = new Dictionary<string, string>()
         {
             {"txt", "text/plain"},
             {"htm", "text/html"},
@@ -29,6 +32,15 @@ namespace RailPhase
             {"pdf", "application/pdf"},
         };
 
+        /// <summary>
+        /// Serves a static file from the filesystem.
+        /// </summary>
+        /// <remarks>
+        /// If you want to server static files, you can use <see cref="App.AddStaticDirectory"/>, which encapsulates this method as a <see cref="View"/>.
+        /// </remarks>
+        /// <param name="context">The current request context of the file to be served.</param>
+        /// <param name="urlPrefix">The part of the request URL that corresponds to the local filesystem folder. The request URL has to start with this string. The part after it will be treated as the filename to be served.</param>
+        /// <param name="rootDirectory">The root directory of the served files.</param>
         public static void ServeStaticFiles(Context context, string urlPrefix, string rootDirectory)
         {
             string root = Path.GetFullPath(rootDirectory);

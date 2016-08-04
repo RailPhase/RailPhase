@@ -6,11 +6,19 @@ using System.Threading.Tasks;
 
 namespace RailPhase
 {
+    /// <summary>
+    /// Contains information about an exeption that occured during a request.
+    /// </summary>
+    /// <remarks>Used by <see cref="ViewDebugException"/> as the template context.</remarks>
     public class RequestExceptionInfo
     {
         public Exception Exception { get; set; }
         public Context Context { get; set; }
     }
+
+    /// <summary>
+    /// Base class for errors that occur during the processing of a request.
+    /// </summary>
     public class RequestException: Exception
     {
         const string DebugExceptionTemplate = @"
@@ -78,6 +86,13 @@ namespace RailPhase
       </body>
       </html>
         ";
+
+        /// <summary>
+        /// A <see cref="View"/> that displays the exception that occured during a request.
+        /// </summary>
+        /// <remarks>
+        /// Used internally as the default for <see cref="App.InternalErrorView"/>. Relies on the context having an exception tag (see <see cref="Context.AddTag"/>). This tag is present when <see cref="App.InternalErrorView"/> is called.
+        /// </remarks>
         public static void ViewDebugException(Context context)
         {
             var exception = context.GetTag<Exception>();
@@ -93,10 +108,16 @@ namespace RailPhase
         }
     }
 
+    /// <summary>
+    /// Signals that a request could not be served because the requested resource was not found.
+    /// </summary>
     public class NotFoundException: RequestException
     {
     }
 
+    /// <summary>
+    /// Signals that a request could not be served because the client has no permission to view the requested resource.
+    /// </summary>
     public class NotAllowedException: RequestException
     {
 
