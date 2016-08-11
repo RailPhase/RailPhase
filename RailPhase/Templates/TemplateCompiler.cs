@@ -8,6 +8,7 @@ using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using System.Diagnostics;
 using System.IO;
+using RailPhase.Templates.Parser;
 
 namespace RailPhase
 {
@@ -118,7 +119,7 @@ namespace RailPhase
 
         internal static Type ParseTemplateString(string template, string name)
         {
-            var parser = TemplateParser.Parser.FromText(template);
+            var parser = Parser.FromText(template);
             var success = parser.Parse();
 
             if(!success)

@@ -108,6 +108,15 @@
     <None Include="Templates\TestFiles\TemplateBlockChild.output">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Templates\TestFiles\TemplateDate.input">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\TestFiles\TemplateInclude.input">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\TestFiles\TemplateInclude.output">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Templates\TestFiles\WeirdNameäö☕, ... !.input">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

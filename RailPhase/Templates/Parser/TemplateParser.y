@@ -16,8 +16,10 @@
 %token TAG_START_USING
 %token TAG_START_CONTEXT
 %token TAG_START_EXTENDS
+%token TAG_START_INCLUDE
 %token TAG_END
 %token KEY_IN
+%token KEY_WITH
 %token VALUE_START
 %token VALUE_END
 
@@ -61,6 +63,7 @@ tag
  | tag_using
  | tag_context
  | tag_extends
+ | tag_include
  ;
 
 tag_value: VALUE_START expr VALUE_END
@@ -114,6 +117,17 @@ tag_extends: TAG_START_EXTENDS expr TAG_END
   }
   ;
 
+tag_include: TAG_START_INCLUDE filename KEY_WITH expr TAG_END
+  {
+   $$ = "output.Append(Template.FromFile(" + $2 + ")(" + $4 + "));\n";
+  }
+  | TAG_START_INCLUDE filename TAG_END
+  {
+  $$ = "output.Append(Template.FromFile(" + $2 + ")(null));\n";
+  }
+  ;
+
+filename: expr;
 varname: expr;
 expr:
  TEXT

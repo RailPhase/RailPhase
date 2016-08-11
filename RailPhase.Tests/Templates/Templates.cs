@@ -72,7 +72,7 @@ namespace RailPhase.Tests
                 SomeString = "Hello World!",
                 SomeInteger = 12345,
             };
-
+            
             string[] testFiles =
             {
                 "Templates/TestFiles/Template1",
@@ -81,8 +81,9 @@ namespace RailPhase.Tests
                 "Templates/TestFiles/TemplateBlockBase",
                 "Templates/TestFiles/TemplateBlockChild",
                 "Templates/TestFiles/WeirdNameäö☕, ... !",
+                "Templates/TestFiles/TemplateInclude",
             };
-
+            
             // Load templates multiple time to force the cache to become effective
             for (int i = 0; i < 3; i++)
             {

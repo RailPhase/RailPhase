@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using QUT.Gppg;
 
-namespace RailPhase.TemplateParser
+namespace RailPhase.Templates.Parser
 {
     internal partial class Parser
     {
@@ -111,6 +111,8 @@ namespace RailPhase.TemplateParser
                             return (int)Tokens.TAG_START_CONTEXT;
                         case "extends":
                             return (int)Tokens.TAG_START_EXTENDS;
+                        case "include":
+                            return (int)Tokens.TAG_START_INCLUDE;
                         default:
                             return (int)Tokens.error;
                     }
@@ -162,11 +164,13 @@ namespace RailPhase.TemplateParser
 
                     switch (text.ToString())
                     {
-                        case "in":
-                            return (int)Tokens.KEY_IN;
-                        default:
-                            yylval = text.ToString();
-                            return (int)Tokens.TEXT;
+                      case "in":
+                          return (int)Tokens.KEY_IN;
+                      case "with":
+                          return (int)Tokens.KEY_WITH;
+                      default:
+                          yylval = text.ToString();
+                          return (int)Tokens.TEXT;
                     }
                 }
                 else
