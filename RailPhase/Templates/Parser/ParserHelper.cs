@@ -58,6 +58,7 @@ namespace RailPhase.TemplateParser
             }
 
             bool inTag = false;
+            bool inExpr = false;
 
             public override int yylex()
             {
@@ -125,12 +126,14 @@ namespace RailPhase.TemplateParser
                 {
                     reader.Read();
                     inTag = true;
+                    inExpr = true;
                     return (int)Tokens.VALUE_START;
                 }
                 else if (ch == '}' && reader.Peek() == '}')
                 {
                     reader.Read();
                     inTag = false;
+                    inExpr = false;
                     return (int)Tokens.VALUE_END;
                 }
                 else if (!inTag)
@@ -147,11 +150,11 @@ namespace RailPhase.TemplateParser
                     yylval = text.ToString();
                     return (int)Tokens.TEXT;
                 }
-                else if (char.IsWhiteSpace(ch) && inTag)
+                else if (char.IsWhiteSpace(ch) && inTag && !inExpr)
                 {
                     return yylex();
                 }
-                else if (char.IsLetter(ch) && inTag)
+                else if (char.IsLetter(ch) && inTag && !inExpr)
                 {
                     char peek;
                     StringBuilder text = new StringBuilder();
