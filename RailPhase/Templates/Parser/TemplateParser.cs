@@ -3,10 +3,10 @@
 // (see accompanying GPPGcopyright.rtf)
 
 // GPPG version 1.5.2
-// Machine:  KABUTO
-// DateTime: 29.08.2015 12:47:58
-// UserName: Lukas
-// Input file <TemplateParser.y - 29.08.2015 12:47:41>
+// Machine:  golbat
+// DateTime: 28.08.2016 14:20:16
+// UserName: lukas
+// Input file <TemplateParser.y - 28.08.2016 14:20:15>
 
 // options: lines
 
@@ -21,7 +21,7 @@ namespace RailPhase.TemplateParser
 {
 internal enum Tokens {error=2,EOF=3,TEXT=4,TAG_START_BLOCK=5,TAG_START_ENDBLOCK=6,
     TAG_START_IF=7,TAG_START_ENDIF=8,TAG_START_ELSE=9,TAG_START_FOR=10,TAG_START_ENDFOR=11,TAG_START_USING=12,
-    TAG_START_CONTEXT=13,TAG_START_EXTENDS=14,TAG_END=15,KEY_IN=16,VALUE_START=17,VALUE_END=18};
+    TAG_START_DATA=13,TAG_START_EXTENDS=14,TAG_END=15,KEY_IN=16,VALUE_START=17,VALUE_END=18};
 
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
 internal partial class Parser: ShiftReduceParser<string, LexLocation>
@@ -34,7 +34,7 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
   private static string[] nonTerms = new string[] {
       "root", "$accept", "content_opt", "content_list", "content", "text", "tag", 
       "tag_value", "tag_block", "tag_if", "tag_if_else", "tag_for", "tag_using", 
-      "tag_context", "tag_extends", "expr", "varname", };
+      "tag_data", "tag_extends", "expr", "varname", };
 
   static Parser() {
     states[0] = new State(new int[]{4,8,17,11,5,17,7,25,10,38,12,47,13,51,14,55,3,-3},new int[]{-1,1,-3,3,-4,4,-5,23,-6,6,-7,9,-8,10,-9,16,-10,24,-11,36,-12,37,-13,46,-14,50,-15,54});
@@ -175,7 +175,7 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
 #line 73 "TemplateParser.y"
   {
     ResultBlocks[ValueStack[ValueStack.Depth-5]] = ValueStack[ValueStack.Depth-3];
-    CurrentSemanticValue = "output.Append(blockRenderers[\"" + ValueStack[ValueStack.Depth-5] + "\"](context, blockRenderers));";
+    CurrentSemanticValue = "output.Append(blockRenderers[\"" + ValueStack[ValueStack.Depth-5] + "\"](Data, Context, blockRenderers));";
   }
 #line default
         break;
@@ -210,10 +210,10 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
   }
 #line default
         break;
-      case 23: // tag_context -> TAG_START_CONTEXT, expr, TAG_END
+      case 23: // tag_data -> TAG_START_DATA, expr, TAG_END
 #line 104 "TemplateParser.y"
   {
-    ResultContextType = ValueStack[ValueStack.Depth-2];
+    ResultDataType = ValueStack[ValueStack.Depth-2];
     CurrentSemanticValue = "";
   }
 #line default

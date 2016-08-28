@@ -16,7 +16,7 @@ namespace RailPhase.Tests
         {
             var input = "Hello World!";
             var render = Template.FromString(input);
-            var output = render(null);
+            var output = render(null, null);
             Assert.AreEqual(input, output);
         }
 
@@ -26,7 +26,7 @@ namespace RailPhase.Tests
         {
             var input1 = "Some special chars: ☕☳üß - \n \r\n .,;(){}%$!\"";
             var render1 = Template.FromString(input1);
-            var output1 = render1(null);
+            var output1 = render1(null, null);
             Assert.AreEqual(input1, output1);
 
             var input2 = File.ReadAllText("Templates/Utf8Test.txt");
@@ -34,22 +34,22 @@ namespace RailPhase.Tests
             Assert.IsTrue(input2.Contains("κόσμε"));
             var render2 = Template.FromString(input2);
 
-            var output2 = render2(null);
+            var output2 = render2(null, null);
             Assert.AreEqual(input2, output2);
         }
 
         [Test]
         public void Templates_Values()
         {
-            var input = "{% context RailPhase.Tests.TestContext,RailPhase.Tests %}SomeString: {{ SomeString }}, SomeInteger: {{ SomeInteger }}";
-            var context = new TestContext
+            var input = "{% data RailPhase.Tests.TestData,RailPhase.Tests %}SomeString: {{ SomeString }}, SomeInteger: {{ SomeInteger }}";
+            var data = new TestData
             {
                 SomeString = "Hello World!",
                 SomeInteger = 12345,
             };
 
             var render = Template.FromString(input);
-            var output = render(context);
+            var output = render(data, null);
             Assert.AreEqual(output, "SomeString: Hello World!, SomeInteger: 12345");
         }
 
@@ -59,7 +59,7 @@ namespace RailPhase.Tests
             var input = "";
 
             var render = Template.FromString(input);
-            var output = render(null);
+            var output = render(null, null);
 
             Assert.AreEqual(input, output);
         }
@@ -67,7 +67,7 @@ namespace RailPhase.Tests
         [Test]
         public void Templates_Files()
         {
-            var context = new TestContext
+            var data = new TestData
             {
                 SomeString = "Hello World!",
                 SomeInteger = 12345,
@@ -90,7 +90,7 @@ namespace RailPhase.Tests
                 {
                     var expectedOutput = File.ReadAllText(testFilename + ".output");
                     var render = Template.FromFile(testFilename + ".input");
-                    var output = render(context);
+                    var output = render(data, null);
 
                     Assert.AreEqual(expectedOutput, output);
                 }
@@ -108,7 +108,7 @@ namespace RailPhase.Tests
                 "{% if true %}",
                 "{% if null %}{%endif%}",
                 "{{doesnotexist}}",
-                "{% context ThisTypeDoesNotExist,InvalidAssembly %}",
+                "{% data ThisTypeDoesNotExist,InvalidAssembly %}",
                 "{% using InvalidNamespace %}",
             };
 
@@ -142,7 +142,7 @@ namespace RailPhase.Tests
         }
     }
 
-    public class TestContext
+    public class TestData
     {
         public string SomeString = "Hello World!";
         public int SomeInteger = 12345;

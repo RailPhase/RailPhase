@@ -10,7 +10,7 @@ namespace RailPhase.TemplateParser
         public string ResultText = null;
         public Dictionary<string, string> ResultBlocks = new Dictionary<string, string>();
         public List<string> ResultUsings = new List<string>();
-        public string ResultContextType = null;
+        public string ResultDataType = null;
         public string ResultExtends = null;
 
         static string EscapeText(string text)
@@ -107,8 +107,8 @@ namespace RailPhase.TemplateParser
                             return (int)Tokens.TAG_START_ENDFOR;
                         case "using":
                             return (int)Tokens.TAG_START_USING;
-                        case "context":
-                            return (int)Tokens.TAG_START_CONTEXT;
+                        case "data":
+                            return (int)Tokens.TAG_START_DATA;
                         case "extends":
                             return (int)Tokens.TAG_START_EXTENDS;
                         default:

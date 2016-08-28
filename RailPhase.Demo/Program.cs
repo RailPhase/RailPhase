@@ -33,7 +33,7 @@ namespace RailPhase.Demo
         /// <summary>
         /// A view that generates a simple request info page
         /// </summary>
-        static string InfoView(RailPhase.Context request)
+        static string InfoView(RailPhase.Context context)
         {
             // Get the template for the info page.
             var render = Template.FromFile("InfoTemplate.html");
@@ -42,11 +42,11 @@ namespace RailPhase.Demo
             // to display information about the request. Normally, we would
             // pass some custom object here, containing the information we
             // want to display.
-            return render(context: request);
+			return render(null, context);
         }
     }
 
-    public class DemoContext
+    public class DemoData
     {
         public string Heading;
         public string Username;

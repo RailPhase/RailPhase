@@ -14,7 +14,7 @@
 %token TAG_START_FOR
 %token TAG_START_ENDFOR
 %token TAG_START_USING
-%token TAG_START_CONTEXT
+%token TAG_START_DATA
 %token TAG_START_EXTENDS
 %token TAG_END
 %token KEY_IN
@@ -59,7 +59,7 @@ tag
  | tag_if_else
  | tag_for
  | tag_using
- | tag_context
+ | tag_data
  | tag_extends
  ;
 
@@ -72,7 +72,7 @@ tag_value: VALUE_START expr VALUE_END
 tag_block: TAG_START_BLOCK varname TAG_END content_opt TAG_START_ENDBLOCK TAG_END
   {
     ResultBlocks[$2] = $4;
-    $$ = "output.Append(blockRenderers[\"" + $2 + "\"](context, blockRenderers));";
+    $$ = "output.Append(blockRenderers[\"" + $2 + "\"](Data, Context, blockRenderers));";
   }
   ;
 
@@ -100,9 +100,9 @@ tag_using: TAG_START_USING expr TAG_END
   }
   ;
 
-tag_context: TAG_START_CONTEXT expr TAG_END
+tag_data: TAG_START_DATA expr TAG_END
   {
-    ResultContextType = $2;
+    ResultDataType = $2;
     $$ = "";
   }
   ;

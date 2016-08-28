@@ -95,7 +95,7 @@ namespace RailPhase
             AddView(pattern, StringToVoidView((context) =>
             {
                 context.Response.ContentType = contentType;
-                return template(null);
+                return template(null, context);
             }));
         }
 
