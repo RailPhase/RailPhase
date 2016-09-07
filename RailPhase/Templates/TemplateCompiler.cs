@@ -30,6 +30,11 @@ namespace RailPhase
     
     public abstract partial class Template
     {
+        /// <summary>
+        /// If set to true, future calls of <see cref="CompileCsharpTemplate"/> will activate debug information in the compiled template generator assemblies.
+        /// </summary>
+        public static bool DebugTemplates = false;
+
         internal static Type CompileCsharpTemplate(string csharp, string name, List<string> assemblyReferences)
         {
             var assemblyPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -37,7 +42,19 @@ namespace RailPhase
             CSharpCodeProvider provider = new CSharpCodeProvider();
             CompilerParameters parameters = new CompilerParameters();
             parameters.GenerateInMemory = false;
-            parameters.CompilerOptions = "/optimize";
+            parameters.TempFiles = new TempFileCollection(Environment.GetEnvironmentVariable("TEMP"), true);
+
+            if (DebugTemplates)
+            {
+                parameters.TempFiles.KeepFiles = true;
+                parameters.IncludeDebugInformation = true;
+            }
+            else
+            {
+                parameters.CompilerOptions = "/optimize";
+            }
+
+            
             parameters.OutputAssembly = name;
 
             parameters.ReferencedAssemblies.AddRange(assemblyReferences.ToArray());
