@@ -10,6 +10,6 @@
     <projectUrl>https://github.com/RailPhase/RailPhase/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A web framework for .NET</description>
-    <copyright>Copyright Lukas Boersma 2015</copyright>
+    <copyright>Copyright Lukas Boersma 2017</copyright>
   </metadata>
 </package>
