@@ -25,9 +25,9 @@ namespace RailPhase.Demo
 
             // Start listening for HTTP requests. Default port is 8080.
             // This method does never return!
-            app.RunHttpServer();
+            app.RunHttpServer("http://localhost:18080/");
 
-            // Now you should be able to visit me in your browser on http://localhost:8080
+            // Now you should be able to visit me in your browser on http://localhost:18080/
         }
 
         /// <summary>
