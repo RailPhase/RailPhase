@@ -84,10 +84,9 @@ namespace RailPhase
         /// <seealso cref="ResponseStream"/>
         public void WriteResponse(string response)
         {
-            using (var writer = new StreamWriter(ResponseStream, Response.ContentEncoding))
-            {
-                writer.Write(response);
-            }
+            var writer = new StreamWriter(ResponseStream, Response.ContentEncoding);
+            writer.Write(response);
+            writer.Flush();
         }
 
         /// <summary>
