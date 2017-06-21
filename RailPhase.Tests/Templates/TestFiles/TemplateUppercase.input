@@ -1,1 +1,1 @@
-{{Data.ToUpper()}}
+{{(Data as string).ToUpper()}}
