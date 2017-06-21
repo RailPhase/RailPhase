@@ -1,5 +1,4 @@
-﻿{% context RailPhase.Context,RailPhase %}
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
 <head>
@@ -12,7 +11,7 @@
 <body>
 
   <div class="container">
-    <h1>Request <a href="{{Request.Url}}">{{Request.Url}}</a></h1>
+    <h1>Request <a href="{{Context.Request.Url}}">{{Context.Request.Url}}</a></h1>
     
     <hr>
 
@@ -23,10 +22,10 @@
         <th>Name</th>
         <th>Value</th>
       </tr>
-      {% for header in Request.Headers.AllKeys %}
+      {% for header in Context.Request.Headers.AllKeys %}
       <tr>
         <td>{{header}}</td>
-        <td>{{Request.Headers[header]}}</td>
+        <td>{{Context.Request.Headers[header]}}</td>
       </tr>
       {% endfor %}
     </table>

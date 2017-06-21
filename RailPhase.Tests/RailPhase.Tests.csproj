@@ -117,6 +117,9 @@
     <None Include="Templates\TestFiles\TemplateInclude.output">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Templates\TestFiles\TemplateUppercase.input">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Templates\TestFiles\WeirdNameäö☕, ... !.input">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

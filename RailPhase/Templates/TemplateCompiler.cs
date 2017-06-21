@@ -31,6 +31,11 @@ namespace RailPhase
     
     public abstract partial class Template
     {
+        /// <summary>
+        /// If set to true, future calls of <see cref="CompileCsharpTemplate"/> will activate debug information in the compiled template generator assemblies.
+        /// </summary>
+        public static bool DebugTemplates = false;
+
         internal static Type CompileCsharpTemplate(string csharp, string name, List<string> assemblyReferences)
         {
             var assemblyPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -38,7 +43,19 @@ namespace RailPhase
             CSharpCodeProvider provider = new CSharpCodeProvider();
             CompilerParameters parameters = new CompilerParameters();
             parameters.GenerateInMemory = false;
-            parameters.CompilerOptions = "/optimize";
+            parameters.TempFiles = new TempFileCollection(Environment.GetEnvironmentVariable("TEMP"), true);
+
+            if (DebugTemplates)
+            {
+                parameters.TempFiles.KeepFiles = true;
+                parameters.IncludeDebugInformation = true;
+            }
+            else
+            {
+                parameters.CompilerOptions = "/optimize";
+            }
+
+            
             parameters.OutputAssembly = name;
 
             parameters.ReferencedAssemblies.AddRange(assemblyReferences.ToArray());
@@ -68,7 +85,7 @@ namespace RailPhase
         {
             var s = new StringBuilder();
 
-            s.AppendLine("public static string "+name+ "(object contextObj, Dictionary<string,BlockRenderer> blockRenderers) {");
+            s.AppendLine("public static string "+name+ "(object dataObj, Context Context, Dictionary<string,BlockRenderer> blockRenderers) {");
 
             // override local blocks by setting the renderers to the local methods
             foreach (var block in localBlocks)
@@ -78,14 +95,14 @@ namespace RailPhase
 
             if(contextType != null)
             {
-                s.AppendLine("var context = (" + contextType.FullName + ")contextObj;");
+                s.AppendLine("var Data = (" + contextType.FullName + ")dataObj;");
 
                 // Import all public fields and properties so that they are available locally
                 foreach (var field in contextType.GetFields(BindingFlags.Instance | BindingFlags.Public))
                 {
                     if (!field.IsStatic)
                     {
-                        s.AppendLine("var " + field.Name + " = context." + field.Name + ";");
+                        s.AppendLine("var " + field.Name + " = Data." + field.Name + ";");
                         if(!assemblyReferences.Contains(field.FieldType.Assembly.Location))
                         {
                             assemblyReferences.Add(field.FieldType.Assembly.Location);
@@ -95,7 +112,7 @@ namespace RailPhase
                 foreach (var property in contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
                 {
                     if (property.CanRead)
-                        s.AppendLine("var " + property.Name + " = context." + property.Name + ";");
+                        s.AppendLine("var " + property.Name + " = Data." + property.Name + ";");
                     if (!assemblyReferences.Contains(property.PropertyType.Assembly.Location))
                     {
                         assemblyReferences.Add(property.PropertyType.Assembly.Location);
@@ -104,7 +121,7 @@ namespace RailPhase
             }
             else
             {
-                s.AppendLine("var context = contextObj;");
+                s.AppendLine("var Data = dataObj;");
             }
 
             s.AppendLine("StringBuilder output = new StringBuilder();");
@@ -127,13 +144,13 @@ namespace RailPhase
                 throw new TemplateParserException("Syntax Error!");
             }
             
-            Type contextType = null;
+            Type dataType = null;
 
-            if (parser.ResultContextType != null)
+            if (parser.ResultDataType != null)
             {
-                contextType = Type.GetType(parser.ResultContextType);
-                if (contextType == null)
-                    throw new TemplateParserException("Unable to resolve context type '" + parser.ResultContextType + "'");
+                dataType = Type.GetType(parser.ResultDataType);
+                if (dataType == null)
+                    throw new TemplateParserException("Unable to resolve data type '" + parser.ResultDataType + "'");
             }
 
             var assemblyReferences = new List<string>();
@@ -142,8 +159,8 @@ namespace RailPhase
             assemblyReferences.Add(Utils.AssemblyByName("RailPhase").Location);
 
 
-            if (contextType != null)
-                assemblyReferences.Add(contextType.Assembly.Location);
+            if (dataType != null)
+                assemblyReferences.Add(dataType.Assembly.Location);
 
             Type extendsType = null;
             if(parser.ResultExtends != null)
@@ -197,21 +214,21 @@ namespace RailPhase
             // Implement blocks as callable functions
             foreach (var block in parser.ResultBlocks)
             {
-                s.Append(BuildBlock("Block_" + block.Key, block.Value, contextType, parser.ResultBlocks.Keys, name, assemblyReferences));
+                s.Append(BuildBlock("Block_" + block.Key, block.Value, dataType, parser.ResultBlocks.Keys, name, assemblyReferences));
             }
 
             if (extendsType == null)
             {
-                s.Append(BuildBlock("Block_Root", parser.ResultText, contextType, parser.ResultBlocks.Keys, name, assemblyReferences));
+                s.Append(BuildBlock("Block_Root", parser.ResultText, dataType, parser.ResultBlocks.Keys, name, assemblyReferences));
             }
             else
             {
                 // Extending Templates don't use their own root block, but call the one of the extended template, with the local blocks as overrides.
-                string extendingContent = "return " + extendsType.FullName + ".Block_Root(context, blockRenderers);";
-                s.Append(BuildBlock("Block_Root", extendingContent, contextType, parser.ResultBlocks.Keys, name, assemblyReferences));
+                string extendingContent = "return " + extendsType.FullName + ".Block_Root(Data, Context, blockRenderers);";
+                s.Append(BuildBlock("Block_Root", extendingContent, dataType, parser.ResultBlocks.Keys, name, assemblyReferences));
             }
 
-            s.AppendLine("public static string Render(object context) { return Block_Root(context, new Dictionary<string,BlockRenderer>()); }");
+            s.AppendLine("public static string Render(object data, Context context) { return Block_Root(data, context, new Dictionary<string,BlockRenderer>()); }");
 
             s.AppendLine("} // class");
             s.AppendLine("} // namespace");

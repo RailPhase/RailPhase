@@ -95,7 +95,7 @@ namespace RailPhase
             AddView(pattern, StringToVoidView((context) =>
             {
                 context.Response.ContentType = contentType;
-                return template(null);
+                return template(null, context);
             }));
         }
 
@@ -233,7 +233,14 @@ namespace RailPhase
                             if (context == null)
                                 context = new Context(httpContext);
                             context.AddTag<Exception>(e);
-                            RequestException.ViewDebugException(context);
+                            try
+                            {
+                                InternalErrorView(context);
+                            }
+                            catch(Exception)
+                            {
+
+                            }
                         }
                     }
                     else
@@ -269,7 +276,33 @@ namespace RailPhase
             {
                 //Todo: Log 404
                 context = new Context(httpContext, null);
-                NotFoundView(context);
+                if(CatchViewExceptions)
+                {
+                    try
+                    {
+                        NotFoundView(context);
+                    }
+                    catch (Exception e)
+                    {
+                        // We catch any exception to make sure the request will be serverd and the app will continue to run.
+                        //InternalErrorView(context);
+                        if (context == null)
+                            context = new Context(httpContext);
+                        context.AddTag<Exception>(e);
+                        try
+                        {
+                            InternalErrorView(context);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
+                }
+                else
+                {
+                    NotFoundView(context);
+                }
             }
             
             serveTimer.Stop();

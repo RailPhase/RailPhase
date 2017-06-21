@@ -21,7 +21,7 @@ namespace RailPhase.Tests
                 if (!input.Contains("{{") && !input.Contains("{%"))
                 {
                     var render = Template.FromString(input);
-                    var output = render(null);
+                    var output = render(null, null);
                     Assert.AreEqual(input, output);
                 }
             }

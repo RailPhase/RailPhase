@@ -1,4 +1,4 @@
-﻿{% context RailPhase.Tests.TestContext,RailPhase.Tests %}
+﻿{% data RailPhase.Tests.TestData,RailPhase.Tests %}
 {% using System.Text %}
 SomeString: {{ SomeString }}, SomeInteger: {{ SomeInteger }}
 {% if FlagProperty %}

@@ -13,7 +13,6 @@ namespace RailPhase
     public class RequestExceptionInfo
     {
         public Exception Exception { get; set; }
-        public Context Context { get; set; }
     }
 
     /// <summary>
@@ -22,7 +21,7 @@ namespace RailPhase
     public class RequestException: Exception
     {
         const string DebugExceptionTemplate = @"
-                    {% context RailPhase.RequestExceptionInfo, RailPhase %}
+                    {% data RailPhase.RequestExceptionInfo, RailPhase %}
       <!DOCTYPE html>
       <html lang=""en"">
       <head>
@@ -99,12 +98,11 @@ namespace RailPhase
             var info = new RequestExceptionInfo
             {
                 Exception = exception,
-                Context = context
             };
 
             var template = Template.FromString(DebugExceptionTemplate);
             context.Response.StatusCode = 500;
-            context.WriteResponse(template(info));
+            context.WriteResponse(template(info, context));
         }
     }
 

@@ -3,10 +3,10 @@
 // (see accompanying GPPGcopyright.rtf)
 
 // GPPG version 1.5.2
-// Machine:  DESKTOP-RILGCH2
-// DateTime: 10.08.2016 15:29:01
+// Machine:  TAUROS
+// DateTime: 21.06.2017 23:04:28
 // UserName: Lukas
-// Input file <TemplateParser.y - 10.08.2016 15:28:55>
+// Input file <.\TemplateParser.y - 21.06.2017 23:04:22>
 
 // options: lines
 
@@ -21,7 +21,7 @@ namespace RailPhase.Templates.Parser
 {
 internal enum Tokens {error=2,EOF=3,TEXT=4,TAG_START_BLOCK=5,TAG_START_ENDBLOCK=6,
     TAG_START_IF=7,TAG_START_ENDIF=8,TAG_START_ELSE=9,TAG_START_FOR=10,TAG_START_ENDFOR=11,TAG_START_USING=12,
-    TAG_START_CONTEXT=13,TAG_START_EXTENDS=14,TAG_START_INCLUDE=15,TAG_END=16,KEY_IN=17,KEY_WITH=18,
+    TAG_START_DATA=13,TAG_START_EXTENDS=14,TAG_START_INCLUDE=15,TAG_END=16,KEY_IN=17,KEY_WITH=18,
     VALUE_START=19,VALUE_END=20};
 
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
@@ -35,7 +35,7 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
   private static string[] nonTerms = new string[] {
       "root", "$accept", "content_opt", "content_list", "content", "text", "tag", 
       "tag_value", "tag_block", "tag_if", "tag_if_else", "tag_for", "tag_using", 
-      "tag_context", "tag_extends", "tag_include", "expr", "varname", "filename", 
+      "tag_data", "tag_extends", "tag_include", "expr", "varname", "filename", 
       };
 
   static Parser() {
@@ -157,28 +157,28 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
     switch (action)
     {
       case 2: // root -> content_opt
-#line 31 "TemplateParser.y"
+#line 31 ".\TemplateParser.y"
   {
     this.ResultText = ValueStack[ValueStack.Depth-1];
   }
 #line default
         break;
       case 6: // content_list -> content_list, content
-#line 44 "TemplateParser.y"
+#line 44 ".\TemplateParser.y"
     {
       CurrentSemanticValue = ValueStack[ValueStack.Depth-2] + "\n" + ValueStack[ValueStack.Depth-1];
     }
 #line default
         break;
       case 7: // content -> text
-#line 51 "TemplateParser.y"
+#line 51 ".\TemplateParser.y"
    {
     CurrentSemanticValue = "output.Append(\""+EscapeText(ValueStack[ValueStack.Depth-1])+"\");";
    }
 #line default
         break;
       case 18: // tag_value -> VALUE_START, expr, VALUE_END
-#line 70 "TemplateParser.y"
+#line 70 ".\TemplateParser.y"
   {
    CurrentSemanticValue = "output.Append(" + ValueStack[ValueStack.Depth-2] + ");";
   }
@@ -186,15 +186,15 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
         break;
       case 19: // tag_block -> TAG_START_BLOCK, varname, TAG_END, content_opt, TAG_START_ENDBLOCK, 
                //              TAG_END
-#line 76 "TemplateParser.y"
+#line 76 ".\TemplateParser.y"
   {
     ResultBlocks[ValueStack[ValueStack.Depth-5]] = ValueStack[ValueStack.Depth-3];
-    CurrentSemanticValue = "output.Append(blockRenderers[\"" + ValueStack[ValueStack.Depth-5] + "\"](context, blockRenderers));";
+    CurrentSemanticValue = "output.Append(blockRenderers[\"" + ValueStack[ValueStack.Depth-5] + "\"](Data, Context, blockRenderers));";
   }
 #line default
         break;
       case 20: // tag_if -> TAG_START_IF, expr, TAG_END, content_opt, TAG_START_ENDIF, TAG_END
-#line 83 "TemplateParser.y"
+#line 83 ".\TemplateParser.y"
   {
    CurrentSemanticValue = "if( "+ValueStack[ValueStack.Depth-5]+" )\n{\n" + ValueStack[ValueStack.Depth-3] + "\n}";
   }
@@ -202,7 +202,7 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
         break;
       case 21: // tag_if_else -> TAG_START_IF, expr, TAG_END, content_opt, TAG_START_ELSE, 
                //                TAG_END, content_opt, TAG_START_ENDIF, TAG_END
-#line 89 "TemplateParser.y"
+#line 89 ".\TemplateParser.y"
 {
  CurrentSemanticValue = "if( "+ValueStack[ValueStack.Depth-8]+" )\n{\n" + ValueStack[ValueStack.Depth-6] + "\n}\nelse\n{\n" + ValueStack[ValueStack.Depth-3] + "\n}";
 }
@@ -210,30 +210,30 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
         break;
       case 22: // tag_for -> TAG_START_FOR, varname, KEY_IN, expr, TAG_END, content_opt, 
                //            TAG_START_ENDFOR, TAG_END
-#line 94 "TemplateParser.y"
+#line 94 ".\TemplateParser.y"
   {
    CurrentSemanticValue = "foreach( var " + ValueStack[ValueStack.Depth-7] + " in (" + ValueStack[ValueStack.Depth-5] + ") )" + "\n{\n" + ValueStack[ValueStack.Depth-3] + "\n}\n";
   }
 #line default
         break;
       case 23: // tag_using -> TAG_START_USING, expr, TAG_END
-#line 100 "TemplateParser.y"
+#line 100 ".\TemplateParser.y"
   {
     ResultUsings.Add(ValueStack[ValueStack.Depth-2]);
     CurrentSemanticValue = "";
   }
 #line default
         break;
-      case 24: // tag_context -> TAG_START_CONTEXT, expr, TAG_END
-#line 107 "TemplateParser.y"
+      case 24: // tag_data -> TAG_START_DATA, expr, TAG_END
+#line 107 ".\TemplateParser.y"
   {
-    ResultContextType = ValueStack[ValueStack.Depth-2];
+    ResultDataType = ValueStack[ValueStack.Depth-2];
     CurrentSemanticValue = "";
   }
 #line default
         break;
       case 25: // tag_extends -> TAG_START_EXTENDS, expr, TAG_END
-#line 114 "TemplateParser.y"
+#line 114 ".\TemplateParser.y"
   {
     ResultExtends = ValueStack[ValueStack.Depth-2];
     CurrentSemanticValue = "";
@@ -241,42 +241,42 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
 #line default
         break;
       case 26: // tag_include -> TAG_START_INCLUDE, filename, KEY_WITH, expr, TAG_END
-#line 121 "TemplateParser.y"
+#line 121 ".\TemplateParser.y"
   {
-   CurrentSemanticValue = "output.Append(Template.FromFile(" + ValueStack[ValueStack.Depth-4] + ")(" + ValueStack[ValueStack.Depth-2] + "));\n";
+   CurrentSemanticValue = "output.Append(Template.FromFile(" + ValueStack[ValueStack.Depth-4] + ")(" + ValueStack[ValueStack.Depth-2] + ", null));\n";
   }
 #line default
         break;
       case 27: // tag_include -> TAG_START_INCLUDE, filename, TAG_END
-#line 125 "TemplateParser.y"
+#line 125 ".\TemplateParser.y"
   {
-  CurrentSemanticValue = "output.Append(Template.FromFile(" + ValueStack[ValueStack.Depth-2] + ")(null));\n";
+  CurrentSemanticValue = "output.Append(Template.FromFile(" + ValueStack[ValueStack.Depth-2] + ")(null, null));\n";
   }
 #line default
         break;
       case 30: // expr -> TEXT
-#line 134 "TemplateParser.y"
+#line 134 ".\TemplateParser.y"
   {
     CurrentSemanticValue = ValueStack[ValueStack.Depth-1];
   }
 #line default
         break;
       case 31: // expr -> expr, TEXT
-#line 138 "TemplateParser.y"
+#line 138 ".\TemplateParser.y"
   {
     CurrentSemanticValue = ValueStack[ValueStack.Depth-2] + ValueStack[ValueStack.Depth-1];
   }
 #line default
         break;
       case 32: // text -> TEXT
-#line 145 "TemplateParser.y"
+#line 145 ".\TemplateParser.y"
   {
     CurrentSemanticValue = ValueStack[ValueStack.Depth-1];
   }
 #line default
         break;
       case 33: // text -> text, TEXT
-#line 149 "TemplateParser.y"
+#line 149 ".\TemplateParser.y"
   {
     CurrentSemanticValue = ValueStack[ValueStack.Depth-2] + ValueStack[ValueStack.Depth-1];
   }
@@ -296,7 +296,7 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
         return CharToString((char)terminal);
   }
 
-#line 155 "TemplateParser.y"
+#line 155 ".\TemplateParser.y"
 #line default
 }
 }

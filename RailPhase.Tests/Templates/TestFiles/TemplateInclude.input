@@ -2,5 +2,5 @@ hello
 
 {% include "Templates/TestFiles/TemplateBlockBase.input" %}
 
-{% include "Templates/TestFiles/TemplateDate.input" with DateTime.Parse("1987-10-02") %}
+{% include "Templates/TestFiles/TemplateUppercase.input" with "UPPERcase" %}
 world
