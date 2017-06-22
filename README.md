@@ -1,6 +1,6 @@
 # RailPhase
 
-[![Build Status](https://travis-ci.org/RailPhase/RailPhase.svg?branch=master)](https://travis-ci.org/RailPhase/RailPhase)
+[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/ewdtjm3v550ygr46?svg=true)](https://ci.appveyor.com/project/LukasBoersma/railphase)
 
 This library allows you to write web applications in .NET via FastCGI. The API is inspired by [Django](https://www.djangoproject.com/). Right now, this library has far less features, though.
 
