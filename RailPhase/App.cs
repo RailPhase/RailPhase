@@ -348,7 +348,8 @@ namespace RailPhase
                         var requestTask = new Task(() =>
                         {
                             HandleRequest(httpContext);
-                            httpContext.Response.OutputStream.Close();
+                            httpContext.Response.OutputStream.Flush();
+                            httpContext.Response.Close();
                         });
 
                         requestTask.Start();
