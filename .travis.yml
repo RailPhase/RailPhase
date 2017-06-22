@@ -5,4 +5,4 @@ install:
 script:
   - xbuild /p:Configuration=Release /p:TargetFrameworkVersion="v4.5" /p:ToolsVersion="4.0" RailPhase.sln
   - cd ./RailPhase.Tests/bin/Release/
-  - mono ./packages/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./RailPhase.Tests.dll
+  - mono ../../../packages/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./RailPhase.Tests.dll
