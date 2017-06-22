@@ -4,4 +4,5 @@ install:
   - nuget restore RailPhase.sln
 script:
   - xbuild /p:Configuration=Release /p:TargetFrameworkVersion="v4.5" /p:ToolsVersion="4.0" RailPhase.sln
-  - mono ./packages/NUnit.ConsoleRunner.3.6.1/tools/nunit-console.exe ./RailPhase.Tests/bin/Release/RailPhase.Tests.dll
+  - cd ./RailPhase.Tests/bin/Release/
+  - mono ./packages/NUnit.ConsoleRunner.3.6.1/tools/nunit2-console.exe ./RailPhase.Tests.dll
