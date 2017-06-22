@@ -52,7 +52,7 @@ namespace RailPhase.Tests
             return s.ToString();
         }
 
-        public const string AppPrefix = "http://localhost:21808/";
+        public const string AppPrefix = "http://127.0.0.1:21808/";
         public static object ServerLock = new object();
 
         public static void AppTest(App app, Action innerAction)
