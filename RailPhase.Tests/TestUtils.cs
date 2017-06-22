@@ -37,12 +37,12 @@ namespace RailPhase.Tests
 
             char lastChar = '\0';
 
-            for (int i = 0; i < length; i++)
+            while (s.Length < length)
             {
                 char c = urlCharacters[rand.Next(urlCharacters.Length)];
 
-                // Prevent two consecutive slashes, don't start with a slash
-                if (c != '/' || lastChar != '/' && (c != '/' || i > 0))
+                // Prevent two consecutive slashes, don't start with a slash, dont't include './'
+                if ((c != '/' || lastChar != '/') && (c != '/' || lastChar != '.') && (c != '/' || s.Length > 0))
                 {
                     s.Append(c.ToString());
                     lastChar = c;
@@ -53,22 +53,27 @@ namespace RailPhase.Tests
         }
 
         public const string AppPrefix = "http://localhost:21808/";
+        public static object ServerLock = new object();
 
         public static void AppTest(App app, Action innerAction)
         {
-            var appThread = new Thread(() => {
-                app.RunHttpServer(AppPrefix);
-            });
+            lock (ServerLock)
+            {
+                var appThread = new Thread(() =>
+                {
+                    app.RunHttpServer(AppPrefix);
+                });
 
-            try
-            {
-                appThread.Start();
-                innerAction();
-            }
-            finally
-            {
-                app.Stop();
-                appThread.Join();
+                try
+                {
+                    appThread.Start();
+                    innerAction();
+                }
+                finally
+                {
+                    app.Stop();
+                    appThread.Join();
+                }
             }
         }
     }
