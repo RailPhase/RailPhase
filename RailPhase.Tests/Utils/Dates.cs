@@ -24,7 +24,7 @@ namespace RailPhase.Tests.Utils
         {
             var date = new DateTime(2015, 08, 29, 23, 01, 45, DateTimeKind.Utc);
             var result = date.ToRFC822String();
-            Assert.AreEqual("Sat, 29 Aug 2015 23:01:45", result);
+            Assert.AreEqual("Sat, 29 Aug 2015 23:01:45 UT", result);
         }
 
         [Test]

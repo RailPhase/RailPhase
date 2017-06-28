@@ -92,7 +92,7 @@ namespace RailPhase
         /// </summary>
         public static string ToRFC822String(this DateTime timestamp)
         {
-            return timestamp.ToString("ddd',' d MMM yyyy HH':'mm':'ss", CultureInfo.InvariantCulture);
+            return timestamp.ToUniversalTime().ToString("ddd',' d MMM yyyy HH':'mm':'ss 'UT'", CultureInfo.InvariantCulture);
         }
 
         /// <summary>
