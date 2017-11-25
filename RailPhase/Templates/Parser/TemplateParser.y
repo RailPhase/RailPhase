@@ -119,11 +119,11 @@ tag_extends: TAG_START_EXTENDS expr TAG_END
 
 tag_include: TAG_START_INCLUDE filename KEY_WITH expr TAG_END
   {
-   $$ = "output.Append(Template.FromFile(" + $2 + ")(" + $4 + ", null));\n";
+   $$ = "output.Append(Template.FromFile(" + $2 + ")(" + $4 + ", Context));\n";
   }
   | TAG_START_INCLUDE filename TAG_END
   {
-  $$ = "output.Append(Template.FromFile(" + $2 + ")(null, null));\n";
+  $$ = "output.Append(Template.FromFile(" + $2 + ")(null, Context));\n";
   }
   ;
 

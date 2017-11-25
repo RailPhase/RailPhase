@@ -243,14 +243,14 @@ internal partial class Parser: ShiftReduceParser<string, LexLocation>
       case 26: // tag_include -> TAG_START_INCLUDE, filename, KEY_WITH, expr, TAG_END
 #line 121 ".\TemplateParser.y"
   {
-   CurrentSemanticValue = "output.Append(Template.FromFile(" + ValueStack[ValueStack.Depth-4] + ")(" + ValueStack[ValueStack.Depth-2] + ", null));\n";
+   CurrentSemanticValue = "output.Append(Template.FromFile(" + ValueStack[ValueStack.Depth-4] + ")(" + ValueStack[ValueStack.Depth-2] + ", Context));\n";
   }
 #line default
         break;
       case 27: // tag_include -> TAG_START_INCLUDE, filename, TAG_END
 #line 125 ".\TemplateParser.y"
   {
-  CurrentSemanticValue = "output.Append(Template.FromFile(" + ValueStack[ValueStack.Depth-2] + ")(null, null));\n";
+  CurrentSemanticValue = "output.Append(Template.FromFile(" + ValueStack[ValueStack.Depth-2] + ")(null, Context));\n";
   }
 #line default
         break;
