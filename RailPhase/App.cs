@@ -333,44 +333,51 @@ namespace RailPhase
 
                 while (IsRunning)
                 {
-                    if (listenerTask == null)
+                    try
                     {
-                        listenerTask = listener.GetContextAsync();
-                    }
-
-                    if (listenerTask.IsCompleted)
-                    {
-                        var httpContext = listenerTask.Result;
-                        listenerTask = null;
-
-                        ApplyDefaultSettings(httpContext);
-
-                        var requestTask = new Task(() =>
+                        if (listenerTask == null)
                         {
-                            HandleRequest(httpContext);
-                            httpContext.Response.OutputStream.Flush();
-                            httpContext.Response.Close();
-                        });
+                            listenerTask = listener.GetContextAsync();
+                        }
 
-                        requestTask.Start();
-
-                        if (EnableAsyncProcessing)
+                        if (listenerTask.IsCompleted)
                         {
-                            OpenRequests.Enqueue(requestTask);
-                            while (OpenRequests.Count > MaxParallelRequests && OpenRequests.Count > 0)
+                            var httpContext = listenerTask.Result;
+                            listenerTask = null;
+
+                            ApplyDefaultSettings(httpContext);
+
+                            var requestTask = new Task(() =>
                             {
-                                var oldestTask = OpenRequests.Dequeue();
-                                oldestTask.Wait();
+                                HandleRequest(httpContext);
+                                httpContext.Response.OutputStream.Flush();
+                                httpContext.Response.Close();
+                            });
+
+                            requestTask.Start();
+
+                            if (EnableAsyncProcessing)
+                            {
+                                OpenRequests.Enqueue(requestTask);
+                                while (OpenRequests.Count > MaxParallelRequests && OpenRequests.Count > 0)
+                                {
+                                    var oldestTask = OpenRequests.Dequeue();
+                                    oldestTask.Wait();
+                                }
+                            }
+                            else
+                            {
+                                requestTask.Wait();
                             }
                         }
                         else
                         {
-                            requestTask.Wait();
+                            Thread.Sleep(1);
                         }
                     }
-                    else
+                    catch(Exception e)
                     {
-                        Thread.Sleep(1);
+
                     }
                 }
                 
