@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace RailPhase
 {
@@ -12,6 +14,31 @@ namespace RailPhase
     /// </summary>
     public abstract partial class Template
     {
+        /// <summary>
+        /// This is the prefix of all template names.
+        /// </summary>
+        static readonly string TemplateNamePrefix = "RailPhase_TemplateRendererCache_";
+
+        /// <summary>
+        /// The directory path where all template cache files are located.
+        /// </summary>
+        public static readonly string TemplateCachePath;
+
+        static Template()
+        {
+            // Remove any old template cache files
+            var railPhaseAssembly = typeof(Template).Assembly;
+            var assemblyUri = new UriBuilder(railPhaseAssembly.CodeBase);
+            var assemblyLocation = Uri.UnescapeDataString(assemblyUri.Path);
+            var TemplateCachePath = Path.GetDirectoryName(assemblyLocation);
+            var localDir = new DirectoryInfo(TemplateCachePath);
+            var oldCacheFiles = localDir.EnumerateFiles(TemplateNamePrefix + "*");
+            foreach(var oldCacheFile in oldCacheFiles)
+            {
+                oldCacheFile.Delete();
+            }
+        }
+
         /// <summary>
         /// Loads a <see cref="TemplateRenderer"/> from a file.
         /// </summary>
@@ -27,7 +54,7 @@ namespace RailPhase
         public static TemplateRenderer FromString(string text)
         {
             Type t;
-            return CompileTemplateString(text, out t);
+            return CompileTemplateString(text, out t, TemplateName());
         }
 
         static long TemplateNameCounter = 0;
@@ -55,7 +82,10 @@ namespace RailPhase
 
                 string templateText = File.ReadAllText(normalizedFilename);
                 Type type;
-                TemplateRenderer templateRenderer = CompileTemplateString(templateText, out type);
+
+                var name = TemplateName(normalizedFilename);
+
+                TemplateRenderer templateRenderer = CompileTemplateString(templateText, out type, name);
                 TemplateRendererFileCache[normalizedFilename] = templateRenderer;
                 TemplateTypeFileCache[normalizedFilename] = type;
                 templateType = type;
@@ -63,12 +93,22 @@ namespace RailPhase
             }
         }
 
-        static TemplateRenderer CompileTemplateString(string templateText, out Type templateType)
+        static Regex templateNameDisallowedCaracters = new Regex("[^A-Za-z_0-9]");
+
+        private static string TemplateName(string filePath = "")
         {
             TemplateNameCounter++;
-            string templateName = "Template" + TemplateNameCounter.ToString();
+            var fileName = Path.GetFileName(filePath);
+            // Remove any characters that are not allowed
+            var cleanName = templateNameDisallowedCaracters.Replace(fileName, "_");
 
-            Type type = ParseTemplateString(templateText, templateName);
+            // The resulting name is the common template name prefix plus the cleaned file name plus a unique number
+            return TemplateNamePrefix + cleanName + TemplateNameCounter.ToString();
+        }
+
+        static TemplateRenderer CompileTemplateString(string templateText, out Type templateType, string name)
+        {
+            Type type = ParseTemplateString(templateText, name);
             TemplateRenderer renderDelegate = (TemplateRenderer)type.GetMethod("Render").CreateDelegate(typeof(TemplateRenderer));
 
             templateType = type;
