@@ -81,7 +81,7 @@ namespace RailPhase
             return templateClass;
         }
 
-        static string BuildBlock(string name, string content, Type contextType, IEnumerable<string> localBlocks, string templateName, List<string> assemblyReferences)
+        static string BuildBlock(string name, string content, Type dataType, IEnumerable<string> localBlocks, string templateName, List<string> assemblyReferences)
         {
             var s = new StringBuilder();
 
@@ -93,12 +93,12 @@ namespace RailPhase
                 s.AppendLine("if(!blockRenderers.ContainsKey(\"" + block + "\")) blockRenderers[\"" + block + "\"] = Block_" + block + ";");
             }
 
-            if(contextType != null)
+            if(dataType != null)
             {
-                s.AppendLine("var Data = (" + contextType.FullName + ")dataObj;");
+                s.AppendLine("var Data = (" + dataType.FullName + ")dataObj;");
 
                 // Import all public fields and properties so that they are available locally
-                foreach (var field in contextType.GetFields(BindingFlags.Instance | BindingFlags.Public))
+                foreach (var field in dataType.GetFields(BindingFlags.Instance | BindingFlags.Public))
                 {
                     if (!field.IsStatic)
                     {
@@ -109,7 +109,7 @@ namespace RailPhase
                         }
                     }
                 }
-                foreach (var property in contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                foreach (var property in dataType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
                 {
                     if (property.CanRead)
                         s.AppendLine("var " + property.Name + " = Data." + property.Name + ";");
