@@ -1,4 +1,6 @@
-# RailPhase
+# RailPhase (unmaintained!)
+
+**⚠️ Warning: This project is outdated and not maintained. You should not use it for your projects, it probably has security issues. Use [ASP.NET Core] instead!**
 
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/ewdtjm3v550ygr46?svg=true)](https://ci.appveyor.com/project/LukasBoersma/railphase)
 
